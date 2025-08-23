@@ -1,0 +1,100 @@
+/* Form Components */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+}
+
+.input-with-icon {
+    position: relative;
+    width: 100%;
+}
+
+.input-with-icon i:not(.fa-eye, .fa-eye-slash) {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    z-index: 2;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+.input-with-icon input:focus {
+    outline: none;
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.toggle-password:hover {
+    background-color: #f1f5f9;
+    color: #2563EB;
+}
+
+.toggle-password:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.toggle-password i {
+    font-size: 18px;
+}
+
+/* Responsive para formularios */
+@media (max-width: 576px) {
+    .input-with-icon input {
+        padding: 10px 12px 10px 40px;
+        font-size: 14px;
+    }
+    
+    .input-with-icon i:not(.fa-eye, .fa-eye-slash) {
+        left: 12px;
+        font-size: 14px;
+    }
+    
+    .toggle-password {
+        width: 36px;
+        height: 36px;
+        right: 10px;
+    }
+    
+    .toggle-password i {
+        font-size: 16px;
+    }
+}

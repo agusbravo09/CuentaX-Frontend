@@ -1,0 +1,93 @@
+/* Utility Classes */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f8fafc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #334155;
+    padding: 1rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #297c79;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #225f5c;
+}
+
+.btn-secondary {
+    background-color: #2563EB;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-accent {
+    background-color: #F59E0B;
+    color: white;
+}
+
+.btn-accent:hover {
+    background-color: #D97706;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+.hidden {
+    display: none;
+}
+
+/* Responsive para utilidades */
+@media (max-width: 576px) {
+    body {
+        padding: 0.5rem;
+        align-items: flex-start;
+        padding-top: 1rem;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 15px;
+    }
+}
