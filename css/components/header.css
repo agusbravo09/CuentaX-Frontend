@@ -1,0 +1,88 @@
+/* Navbar styles */
+.navbar {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.navbar-brand h1 {
+    font-weight: 700;
+}
+
+.navbar-brand span {
+    color: var(--primary);
+}
+
+.navbar-menu {
+    display: flex;
+}
+
+.navbar-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: var(--gray-500);
+}
+
+.navbar-item:hover {
+    background-color: var(--gray-100);
+    color: var(--primary);
+}
+
+.navbar-item.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+.navbar-item.active span {
+    display: inline-block !important; /* Forzamos que el texto sea visible */
+}
+
+/* Media queries para navbar responsive */
+@media (max-width: 767px) {
+    .navbar {
+        bottom: 0;
+        top: auto;
+    }
+    
+    .navbar-brand {
+        display: none;
+    }
+    
+    .navbar-item {
+        flex-direction: column;
+        padding: 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .navbar-item.active {
+        background-color: var(--gray-100);
+        color: var(--primary);
+    }
+    
+    .navbar-item i {
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Ajustes específicos para desktop */
+@media (min-width: 768px) {
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        box-sizing: border-box;
+    }
+    
+    .navbar-menu {
+        gap: 1.5rem;
+    }
+}

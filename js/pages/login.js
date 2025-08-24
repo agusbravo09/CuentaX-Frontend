@@ -1,4 +1,3 @@
-// js/pages/login.js
 document.addEventListener('DOMContentLoaded', function() {
     // Referencias a los modales
     const signupModal = document.getElementById('signupModal');
@@ -25,29 +24,33 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordStrength = document.getElementById('passwordStrength');
     const passwordStrengthText = document.getElementById('passwordStrengthText');
     
+    // Verificar si ya hay una sesión activa
+    if (getLocalStorage('authToken')) {
+        redirectToDashboard();
+    }
+
     // Función para abrir modales
-    function openModal(modal) {
-        modal.classList.add('show');
-        document.body.style.overflow = 'hidden'; // Previene el scroll del body
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
     }
     
     // Función para cerrar modales
-    function closeModal(modal) {
-        modal.classList.remove('show');
-        document.body.style.overflow = ''; // Restaura el scroll del body
-    }
-    
-    // Función para mostrar mensaje de confirmación
-    function showConfirmation(title, message) {
-        document.getElementById('confirmationTitle').textContent = title;
-        document.getElementById('confirmationMessage').textContent = message;
-        openModal(confirmationModal);
-    }
-    
-    // Función para validar email
-    function isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+            document.body.style.overflow = '';
+        }
     }
     
     // Función para verificar la fuerza de la contraseña
@@ -82,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
             passwordStrengthText.textContent = 'Débil';
         } else if (strength < 75) {
             passwordStrength.style.backgroundColor = '#F59E0B';
-            passwordStrengthText.text.textContent = 'Moderada';
+            passwordStrengthText.textContent = 'Moderada';
         } else {
             passwordStrength.style.backgroundColor = '#10B981';
             passwordStrengthText.textContent = 'Fuerte';
@@ -92,31 +95,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners para abrir modales
     signupLink.addEventListener('click', function(e) {
         e.preventDefault();
-        openModal(signupModal);
+        openModal('signupModal');
     });
     
     forgotPasswordLink.addEventListener('click', function(e) {
         e.preventDefault();
-        openModal(forgotPasswordModal);
+        openModal('forgotPasswordModal');
     });
     
     // Event listeners para cerrar modales
     closeModalButtons.forEach(button => {
         button.addEventListener('click', function() {
             const modal = this.closest('.modal');
-            closeModal(modal);
+            closeModal(modal.id);
         });
     });
     
     confirmationButton.addEventListener('click', function() {
-        closeModal(confirmationModal);
+        closeModal('confirmationModal');
     });
     
     // Cerrar modal al hacer clic fuera del contenido
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', function(e) {
             if (e.target === this) {
-                closeModal(this);
+                closeModal(this.id);
             }
         });
     });
@@ -146,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Validación del formulario de login
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const email = document.getElementById('email').value.trim();
@@ -154,35 +157,55 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Validaciones básicas
         if (!email) {
-            showConfirmation('Error', 'Por favor, ingresa tu correo electrónico.');
+            showNotification('Por favor, ingresa tu correo electrónico.', 'error');
             return;
         }
         
         if (!isValidEmail(email)) {
-            showConfirmation('Error', 'Por favor, ingresa un correo electrónico válido.');
+            showNotification('Por favor, ingresa un correo electrónico válido.', 'error');
             return;
         }
         
         if (!password) {
-            showConfirmation('Error', 'Por favor, ingresa tu contraseña.');
+            showNotification('Por favor, ingresa tu contraseña.', 'error');
             return;
         }
         
-        // Aquí iría la llamada a la API (por implementar después)
-        console.log('Iniciando sesión con:', { email, password });
+        // Mostrar estado de carga
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
+        submitBtn.disabled = true;
         
-        // Simulación de inicio de sesión exitoso
-        showConfirmation('Éxito', 'Has iniciado sesión correctamente.');
+        // Intentar login con la API
+        const result = await AuthAPI.login(email, password);
         
-        // Redirección simulada (reemplazar con la real después)
-        setTimeout(() => {
-            // window.location.href = 'dashboard.html';
-            console.log('Redirigiendo al dashboard...');
-        }, 2000);
+        // Restaurar botón
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        
+        if (result.success) {
+            // Almacenar datos de usuario y credenciales
+            setLocalStorage('currentUser', result.data);
+            
+            // Codificar y almacenar credenciales para futuras requests
+            const authToken = btoa(`${email}:${password}`);
+            setLocalStorage('authToken', authToken);
+            setLocalStorage('userEmail', email);
+            
+            showNotification('¡Inicio de sesión exitoso! Redirigiendo...', 'success');
+            
+            // Redirección al dashboard después de un breve delay
+            setTimeout(() => {
+                redirectToDashboard();
+            }, 1500);
+        } else {
+            showNotification(result.error, 'error');
+        }
     });
     
     // Validación del formulario de registro
-    signupForm.addEventListener('submit', function(e) {
+    signupForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const name = document.getElementById('signupName').value.trim();
@@ -192,45 +215,63 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Validaciones
         if (!name) {
-            showConfirmation('Error', 'Por favor, ingresa tu nombre completo.');
+            showNotification('Por favor, ingresa tu nombre completo.', 'error');
             return;
         }
         
         if (!email) {
-            showConfirmation('Error', 'Por favor, ingresa tu correo electrónico.');
+            showNotification('Por favor, ingresa tu correo electrónico.', 'error');
             return;
         }
         
         if (!isValidEmail(email)) {
-            showConfirmation('Error', 'Por favor, ingresa un correo electrónico válido.');
+            showNotification('Por favor, ingresa un correo electrónico válido.', 'error');
             return;
         }
         
         if (!password) {
-            showConfirmation('Error', 'Por favor, crea una contraseña.');
+            showNotification('Por favor, crea una contraseña.', 'error');
             return;
         }
         
-        if (password.length < 8) {
-            showConfirmation('Error', 'La contraseña debe tener al menos 8 caracteres.');
+        if (password.length < 6) {
+            showNotification('La contraseña debe tener al menos 6 caracteres.', 'error');
             return;
         }
         
         if (password !== confirmPassword) {
-            showConfirmation('Error', 'Las contraseñas no coinciden.');
+            showNotification('Las contraseñas no coinciden.', 'error');
             return;
         }
         
-        // Aquí iría la llamada a la API (por implementar después)
-        console.log('Registrando usuario:', { name, email, password });
+        // Mostrar estado de carga
+        const submitBtn = signupForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
+        submitBtn.disabled = true;
         
-        // Simulación de registro exitoso
-        showConfirmation('Éxito', 'Cuenta creada exitosamente. Ahora puedes iniciar sesión.');
+        // Intentar registro con la API
+        const userData = { name, email, password };
+        const result = await AuthAPI.register(userData);
         
-        // Cerrar modal de registro después de éxito
-        setTimeout(() => {
-            closeModal(signupModal);
-        }, 2000);
+        // Restaurar botón
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        
+        if (result.success) {
+            showNotification('Cuenta creada exitosamente. Ahora puedes iniciar sesión.', 'success');
+            
+            // Cerrar modal de registro después de éxito
+            closeModal('signupModal');
+            
+            // Limpiar formulario
+            signupForm.reset();
+            passwordStrength.style.width = '0%';
+            passwordStrength.style.backgroundColor = '#e2e8f0';
+            passwordStrengthText.textContent = 'Seguridad de la contraseña';
+        } else {
+            showNotification(result.error, 'error');
+        }
     });
     
     // Validación del formulario de recuperación de contraseña
@@ -240,24 +281,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = document.getElementById('recoveryEmail').value.trim();
         
         if (!email) {
-            showConfirmation('Error', 'Por favor, ingresa tu correo electrónico.');
+            showNotification('Por favor, ingresa tu correo electrónico.', 'error');
             return;
         }
         
         if (!isValidEmail(email)) {
-            showConfirmation('Error', 'Por favor, ingresa un correo electrónico válido.');
+            showNotification('Por favor, ingresa un correo electrónico válido.', 'error');
             return;
         }
         
-        // Aquí iría la llamada a la API (por implementar después)
-        console.log('Solicitando recuperación para:', email);
+        // Esta funcionalidad no está implementada en el backend
+        showNotification('Funcionalidad de recuperación de contraseña no disponible.', 'warning');
         
-        // Simulación de envío exitoso
-        showConfirmation('Éxito', 'Se ha enviado un enlace de recuperación a tu correo electrónico.');
-        
-        // Cerrar modal de recuperación después de éxito
-        setTimeout(() => {
-            closeModal(forgotPasswordModal);
-        }, 2000);
+        // Cerrar modal de recuperación
+        closeModal('forgotPasswordModal');
     });
 });

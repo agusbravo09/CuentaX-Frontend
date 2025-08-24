@@ -1,4 +1,3 @@
-// js/services/utils.js
 // Funciones de utilidad generales
 
 /**
@@ -69,12 +68,93 @@ function formatDate(date) {
 }
 
 /**
- * Muestra un mensaje de notificación (será reemplazado por el componente de notificación)
+ * Muestra un mensaje de notificación
  * @param {string} message - Mensaje a mostrar
  * @param {string} type - Tipo de notificación (success, error, warning, info)
  */
 function showNotification(message, type = 'info') {
-    // Esta es una implementación temporal
-    // Será reemplazada cuando se implemente el componente de notificación
-    alert(`${type.toUpperCase()}: ${message}`);
+    // Crear elemento de notificación
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                          type === 'error' ? 'fa-exclamation-circle' : 
+                          type === 'warning' ? 'fa-exclamation-triangle' : 
+                          'fa-info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+
+    // Agregar al documento
+    document.body.appendChild(notification);
+
+    // Mostrar con animación
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+
+    // Ocultar y eliminar después de 3 segundos
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+/**
+ * Valida si un email tiene formato válido
+ * @param {string} email - Email a validar
+ * @returns {boolean} True si el email es válido
+ */
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+/**
+ * Redirige al dashboard
+ */
+function redirectToDashboard() {
+    window.location.href = 'dashboard.html';
+}
+
+/**
+ * Muestra un modal de confirmación
+ * @param {string} title - Título del modal
+ * @param {string} message - Mensaje del modal
+ */
+function showConfirmation(title, message) {
+    document.getElementById('confirmationTitle').textContent = title;
+    document.getElementById('confirmationMessage').textContent = message;
+    openModal('confirmationModal');
+}
+
+/**
+ * Formatea una cantidad como moneda
+ * @param {number} amount - Cantidad a formatear
+ * @returns {string} Cantidad formateada como moneda
+ */
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('es-MX', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(amount);
+}
+
+/**
+ * Formatea una fecha en formato corto
+ * @param {string} dateString - Fecha a formatear
+ * @returns {string} Fecha formateada
+ */
+function formatDate(dateString) {
+    const options = { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric' 
+    };
+    return new Date(dateString).toLocaleDateString('es-ES', options);
 }
