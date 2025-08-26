@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +11,13 @@
     <link rel="stylesheet" href="./css/components/modals.css">
     <link rel="stylesheet" href="./css/utilities.css">
 </head>
+
 <body>
     <div class="login-container">
         <div class="left-panel">
             <h2 class="app-title">Controla tus finanzas con FinanzApp</h2>
-            <p class="app-subtitle">La plataforma todo en uno para gestionar tus ingresos, gastos y metas financieras de manera inteligente.</p>
+            <p class="app-subtitle">La plataforma todo en uno para gestionar tus ingresos, gastos y metas financieras de
+                manera inteligente.</p>
             <ul class="features">
                 <li><i class="fas fa-chart-pie"></i> Dashboard con análisis detallado</li>
                 <li><i class="fas fa-piggy-bank"></i> Planificación de ahorros</li>
@@ -22,12 +25,12 @@
                 <li><i class="fas fa-shield-alt"></i> Protección bancaria nivel empresarial</li>
             </ul>
         </div>
-        
+
         <div class="right-panel">
             <div class="logo">
                 <h1>Finanz<span>App</span></h1>
             </div>
-            
+
             <form id="loginForm" class="auth-form">
                 <div class="form-group">
                     <label for="email">Correo electrónico</label>
@@ -36,7 +39,7 @@
                         <input type="email" id="email" placeholder="tu@email.com" required>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="password">Contraseña</label>
                     <div class="input-with-icon">
@@ -47,14 +50,14 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="forgot-password">
                     <a href="#" id="forgotPasswordLink">¿Olvidaste tu contraseña?</a>
                 </div>
-                
+
                 <button type="submit" class="btn btn-primary btn-full">Iniciar Sesión</button>
             </form>
-            
+
             <div class="signup-link">
                 <p>¿No tienes cuenta? <a href="#" id="signupLink">Regístrate ahora</a></p>
             </div>
@@ -76,7 +79,7 @@
                         <input type="text" id="signupName" placeholder="Tu nombre completo" required>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="signupEmail">Correo electrónico</label>
                     <div class="input-with-icon">
@@ -84,7 +87,7 @@
                         <input type="email" id="signupEmail" placeholder="tu@email.com" required>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="signupPassword">Contraseña</label>
                     <div class="input-with-icon">
@@ -101,7 +104,7 @@
                         <p class="strength-text" id="passwordStrengthText">Seguridad de la contraseña</p>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="signupConfirmPassword">Confirmar contraseña</label>
                     <div class="input-with-icon">
@@ -158,4 +161,5 @@
     <script src="./js/services/api/auth-api.js"></script>
     <script src="./js/pages/login.js"></script>
 </body>
+
 </html>

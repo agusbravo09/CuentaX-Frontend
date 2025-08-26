@@ -1,23 +1,22 @@
-// Funciones de utilidad generales
+// utils.js - Funciones globales básicas
+console.log('Utils cargado');
 
-/**
- * Almacena un elemento en localStorage
- * @param {string} key - Clave para almacenar el valor
- * @param {*} value - Valor a almacenar
- */
+function isUserAuthenticated() {
+    const token = getLocalStorage('authToken');
+    const userEmail = getLocalStorage('userEmail');
+    return !!(token && userEmail);
+}
+
+// Almacenamiento localStorage
 function setLocalStorage(key, value) {
     try {
         localStorage.setItem(key, JSON.stringify(value));
+        console.log('Guardado en localStorage:', key);
     } catch (error) {
         console.error('Error al guardar en localStorage:', error);
     }
 }
 
-/**
- * Obtiene un elemento de localStorage
- * @param {string} key - Clave del valor a obtener
- * @returns {*} Valor almacenado o null si no existe
- */
 function getLocalStorage(key) {
     try {
         const item = localStorage.getItem(key);
@@ -28,50 +27,46 @@ function getLocalStorage(key) {
     }
 }
 
-/**
- * Elimina un elemento de localStorage
- * @param {string} key - Clave del valor a eliminar
- */
 function removeLocalStorage(key) {
     try {
         localStorage.removeItem(key);
+        console.log('Eliminado de localStorage:', key);
     } catch (error) {
         console.error('Error al eliminar de localStorage:', error);
     }
 }
 
-/**
- * Formatea una cantidad como moneda
- * @param {number} amount - Cantidad a formatear
- * @param {string} currency - Código de moneda (por defecto 'USD')
- * @returns {string} Cantidad formateada como moneda
- */
-function formatCurrency(amount, currency = 'USD') {
-    return new Intl.NumberFormat('es-MX', {
-        style: 'currency',
-        currency: currency
-    }).format(amount);
+// Formateo
+function formatCurrency(amount) {
+    const num = parseFloat(amount) || 0;
+    return '$' + num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 }
 
-/**
- * Formatea una fecha
- * @param {string|Date} date - Fecha a formatear
- * @returns {string} Fecha formateada
- */
-function formatDate(date) {
-    const options = { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    };
-    return new Date(date).toLocaleDateString('es-ES', options);
+function formatDate(dateString) {
+    try {
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('es-ES', options);
+    } catch (error) {
+        return 'Fecha inválida';
+    }
 }
 
-/**
- * Muestra un mensaje de notificación
- * @param {string} message - Mensaje a mostrar
- * @param {string} type - Tipo de notificación (success, error, warning, info)
- */
+// Validaciones
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Redirecciones
+function redirectToDashboard() {
+    window.location.href = 'dashboard.html';
+}
+
+function redirectToLogin() {
+    window.location.href = 'index.html';
+}
+
+// Notificaciones básicas
 function showNotification(message, type = 'info') {
     // Crear elemento de notificación
     const notification = document.createElement('div');
@@ -105,56 +100,35 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-/**
- * Valida si un email tiene formato válido
- * @param {string} email - Email a validar
- * @returns {boolean} True si el email es válido
- */
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-/**
- * Redirige al dashboard
- */
-function redirectToDashboard() {
-    window.location.href = 'dashboard.html';
-}
-
-/**
- * Muestra un modal de confirmación
- * @param {string} title - Título del modal
- * @param {string} message - Mensaje del modal
- */
-function showConfirmation(title, message) {
-    document.getElementById('confirmationTitle').textContent = title;
-    document.getElementById('confirmationMessage').textContent = message;
-    openModal('confirmationModal');
-}
-
-/**
- * Formatea una cantidad como moneda
- * @param {number} amount - Cantidad a formatear
- * @returns {string} Cantidad formateada como moneda
- */
-function formatCurrency(amount) {
-    return new Intl.NumberFormat('es-MX', {
-        style: 'currency',
-        currency: 'USD'
-    }).format(amount);
-}
-
-/**
- * Formatea una fecha en formato corto
- * @param {string} dateString - Fecha a formatear
- * @returns {string} Fecha formateada
- */
-function formatDate(dateString) {
-    const options = { 
-        day: '2-digit', 
-        month: '2-digit', 
-        year: 'numeric' 
-    };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
+function checkPasswordStrength(password) {
+    let strength = 0;
+    let feedback = '';
+    
+    // Si la contraseña está vacía
+    if (password.length === 0) {
+        return { strength: 0, feedback: 'Seguridad de la contraseña' };
+    }
+    
+    // Verificar longitud
+    if (password.length >= 8) strength += 25;
+    
+    // Verificar si tiene letras minúsculas y mayúsculas
+    if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) strength += 25;
+    
+    // Verificar si tiene números
+    if (password.match(/([0-9])/)) strength += 25;
+    
+    // Verificar si tiene caracteres especiales
+    if (password.match(/([!,@,#,$,%,^,&,*,?,_,~])/)) strength += 25;
+    
+    // Determinar retroalimentación
+    if (strength < 50) {
+        feedback = 'Débil';
+    } else if (strength < 75) {
+        feedback = 'Moderada';
+    } else {
+        feedback = 'Fuerte';
+    }
+    
+    return { strength, feedback };
 }

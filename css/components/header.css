@@ -42,7 +42,86 @@
 }
 
 .navbar-item.active span {
-    display: inline-block !important; /* Forzamos que el texto sea visible */
+    display: inline-block !important;
+    /* Forzamos que el texto sea visible */
+}
+
+/* Estilos para el menú hamburguesa */
+.navbar-hamburger {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--gray-500);
+    transition: all 0.2s ease;
+}
+
+.navbar-hamburger:hover {
+    background-color: var(--gray-100);
+    color: var(--primary);
+}
+
+.navbar-hamburger i {
+    font-size: 1.25rem;
+}
+
+/* Menú desplegable */
+.dropdown-menu {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    padding: 0.5rem 0;
+    z-index: 1001;
+    display: none;
+    min-width: 180px;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: var(--gray-700);
+    transition: all 0.2s ease;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.dropdown-item:hover {
+    background-color: var(--gray-100);
+    color: var(--primary);
+}
+
+.dropdown-item i {
+    margin-right: 0.75rem;
+    width: 20px;
+    text-align: center;
+}
+
+/* Ajustes para móviles */
+@media (max-width: 767px) {
+    .navbar-hamburger {
+        padding: 0.5rem;
+    }
+
+    .dropdown-menu {
+        top: auto;
+        bottom: 70px;
+        right: 10px;
+        left: 10px;
+    }
 }
 
 /* Media queries para navbar responsive */
@@ -51,22 +130,22 @@
         bottom: 0;
         top: auto;
     }
-    
+
     .navbar-brand {
         display: none;
     }
-    
+
     .navbar-item {
         flex-direction: column;
         padding: 0.5rem;
         font-size: 0.75rem;
     }
-    
+
     .navbar-item.active {
         background-color: var(--gray-100);
         color: var(--primary);
     }
-    
+
     .navbar-item i {
         margin-bottom: 0.25rem;
     }
@@ -81,8 +160,17 @@
         padding: 1rem 2rem;
         box-sizing: border-box;
     }
-    
+
     .navbar-menu {
         gap: 1.5rem;
+    }
+
+    .navbar-hamburger {
+        margin-left: auto;
+    }
+
+    .dropdown-menu {
+        top: 80px;
+        right: 20px;
     }
 }

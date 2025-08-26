@@ -93,6 +93,81 @@ body {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.centered-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.centered-card .card-header {
+    justify-content: center;
+    gap: 8px;
+}
+
+.centered-card .card-body {
+    align-items: center;
+}
+
+.monthly-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 8px;
+}
+
+
+.summary-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.summary-trend.positive {
+    color: #10B981;
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.summary-trend.negative {
+    color: #EF4444;
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.summary-period {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+/* Ajustar espaciado en tarjetas centradas */
+.centered-card .amount {
+    margin-bottom: 0.5rem;
+}
+
+/* Asegurar que todas las tarjetas tengan la misma altura */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.2rem;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    min-height: 150px; /* Altura mínima consistente */
+}
+
+.card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .card:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -432,60 +507,6 @@ body {
     margin-right: 0.5rem;
 }
 
-/* Navbar inferior para móviles */
-.navbar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    display: flex;
-    justify-content: space-around;
-    padding: 0.75rem 0;
-    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.05);
-    z-index: 1000;
-}
-
-.navbar-brand {
-    display: none;
-}
-
-.navbar-menu {
-    display: flex;
-    width: 100%;
-    justify-content: space-around;
-}
-
-.navbar-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: var(--gray-500);
-    font-size: 0.75rem;
-    padding: 0.5rem;
-    transition: all 0.2s ease;
-    border-radius: 8px;
-}
-
-.navbar-item i {
-    font-size: 1.25rem;
-    margin-bottom: 0.25rem;
-}
-
-.navbar-item.active {
-    color: var(--primary);
-    background-color: var(--gray-100);
-}
-
-.navbar-item.active span {
-    display: block; /* Aseguramos que el texto sea visible */
-}
-
-.navbar-item:hover {
-    color: var(--primary);
-}
-
 /* Estilos para estados vacíos */
 .empty-state {
     display: flex;
@@ -567,19 +588,54 @@ body {
     padding: 2rem;
 }
 
+/* Estados de carga */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    min-height: 20px;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Estados vacíos */
+.no-data {
+    text-align: center;
+    padding: 2rem;
+    color: #64748b;
+}
+
+.no-data i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #cbd5e1;
+}
+
+.no-data p {
+    margin-bottom: 1.5rem;
+}
+
+.btn-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
 /* Media queries para tablets y escritorio */
 @media (min-width: 768px) {
-    /* Ajustes para el navbar superior en desktop */
-    .navbar {
-        position: fixed;
-        top: 0;
-        bottom: auto;
-        justify-content: space-between;
-        padding: 1rem 2rem;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    
     /* Ajustar el contenedor principal para que quede debajo del navbar */
     .dashboard-container {
         padding: 2rem;
@@ -602,7 +658,7 @@ body {
     }
     
     .summary-cards {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem; /* Más espacio entre cards */
     }
     
@@ -627,52 +683,12 @@ body {
         flex: 1;
     }
     
-    .navbar-brand {
-        display: block;
-    }
-    
-    .navbar-brand h1 {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--secondary);
-    }
-    
-    .navbar-brand span {
-        color: var(--primary);
-    }
-    
-    .navbar-menu {
-        width: auto;
-        gap: 1.5rem;
-    }
-    
-    .navbar-item {
-        flex-direction: row;
-        gap: 0.5rem;
-        font-size: 1rem;
-        padding: 0.5rem 1rem;
-    }
-    
-    .navbar-item i {
-        margin-bottom: 0;
-    }
-    
-    .navbar-item.active {
-        background-color: var(--primary);
-        color: white;
-    }
-    
     .floating-actions {
         bottom: 30px;
     }
 }
 
 @media (max-width: 767px) {
-    .navbar-brand {
-        display: none;
-    }
-    
     .dashboard-header {
         margin-top: 0.5rem; /* Reducimos el margen superior en móvil */
     }

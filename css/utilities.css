@@ -84,7 +84,7 @@ body {
     top: 20px;
     right: 20px;
     padding: 15px 20px;
-    border-radius: 6px;
+    border-radius: 5px;
     color: white;
     z-index: 10000;
     opacity: 0;
@@ -92,6 +92,8 @@ body {
     transition: all 0.3s ease;
     max-width: 350px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
 }
 
 .notification.show {
@@ -100,23 +102,23 @@ body {
 }
 
 .notification.success {
-    background-color: #4caf50;
-    border-left: 4px solid #388e3c;
+    background-color: #10B981;
+    border-left: 4px solid #059669;
 }
 
 .notification.error {
-    background-color: #f44336;
-    border-left: 4px solid #d32f2f;
+    background-color: #EF4444;
+    border-left: 4px solid #DC2626;
 }
 
 .notification.warning {
-    background-color: #ff9800;
-    border-left: 4px solid #f57c00;
+    background-color: #F59E0B;
+    border-left: 4px solid #D97706;
 }
 
 .notification.info {
-    background-color: #2196f3;
-    border-left: 4px solid #1976d2;
+    background-color: #3B82F6;
+    border-left: 4px solid #2563EB;
 }
 
 .notification-content {

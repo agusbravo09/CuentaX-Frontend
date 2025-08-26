@@ -1,0 +1,109 @@
+// api-client.js - Cliente API completo
+console.log('API Client cargado');
+
+const API_BASE_URL = 'http://localhost:8080';
+
+// Función para obtener el header de autenticación
+function getAuthHeader() {
+    const authToken = getLocalStorage('authToken');
+    if (!authToken) {
+        console.error('No hay token de autenticación');
+        return null;
+    }
+    return 'Basic ' + authToken;
+}
+
+// Función genérica para peticiones API
+async function fetchAPI(endpoint, options = {}) {
+    const url = API_BASE_URL + endpoint;
+    const authHeader = getAuthHeader();
+    
+    if (!authHeader) {
+        redirectToLogin();
+        return null;
+    }
+
+    try {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authHeader,
+                ...options.headers,
+            },
+            ...options,
+        };
+
+        if (config.body && typeof config.body === 'object') {
+            config.body = JSON.stringify(config.body);
+        }
+
+        const response = await fetch(url, config);
+        
+        if (response.status === 401) {
+            // Token inválido o expirado
+            removeLocalStorage('authToken');
+            removeLocalStorage('userEmail');
+            removeLocalStorage('currentUser');
+            redirectToLogin();
+            return null;
+        }
+        
+        if (!response.ok) {
+            console.warn(`API warning: ${response.status} for ${endpoint}`);
+            return null;
+        }
+        
+        if (response.status === 204) {
+            return null;
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error en la petición API:', error);
+        showNotification('Error de conexión con el servidor', 'error');
+        return null;
+    }
+}
+
+// Servicios para usuarios
+const userService = {
+    getUserByEmail: (email) => fetchAPI('/api/v1/users/email/' + encodeURIComponent(email)),
+    getUserById: (id) => fetchAPI('/api/v1/users/' + id)
+};
+
+// Servicios para cuentas (completos)
+const accountService = {
+    getAccountsByUserId: (userId) => fetchAPI('/api/v1/accounts/user/' + userId),
+    getAccountById: (id) => fetchAPI('/api/v1/accounts/' + id),
+    getAccountBalance: (id) => fetchAPI('/api/v1/accounts/' + id + '/balance'),
+    createAccount: (accountData) => fetchAPI('/api/v1/accounts', {
+        method: 'POST',
+        body: accountData
+    }),
+    updateAccount: (id, accountData) => fetchAPI('/api/v1/accounts/' + id, {
+        method: 'PUT',
+        body: accountData
+    }),
+    deleteAccount: (id) => fetchAPI('/api/v1/accounts/' + id, {
+        method: 'DELETE'
+    })
+};
+
+// Servicios para transacciones
+const transactionService = {
+    getTransactionsByUserId: (userId) => fetchAPI('/api/v1/transactions/user/' + userId),
+    getRecentTransactions: (userId, limit = 5) => 
+        fetchAPI('/api/v1/transactions/user/' + userId + '?limit=' + limit),
+    getTransactionsByAccountId: (accountId) => 
+        fetchAPI('/api/v1/transactions/account/' + accountId),
+    createTransaction: (transactionData) => fetchAPI('/api/v1/transactions', {
+        method: 'POST',
+        body: transactionData
+    })
+};
+
+// Servicios para categorías
+const categoryService = {
+    getCategories: () => fetchAPI('/api/v1/categories'),
+    getCategoryById: (id) => fetchAPI('/api/v1/categories/' + id)
+};

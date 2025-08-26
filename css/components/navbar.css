@@ -1,0 +1,211 @@
+/* Variables de colores */
+:root {
+    --primary: #297c79;         /* Verde dinero */
+    --secondary: #2563EB;       /* Azul financiero */
+    --accent: #F59E0B;          /* Naranja alerta */
+    --error: #EF4444;           /* Rojo error */
+    --success: #10B981;         /* Verde éxito */
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+}
+
+/* Navbar inferior para móviles */
+.navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 0.75rem 0;
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+}
+
+.navbar-brand {
+    display: none;
+}
+
+.navbar-menu {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.navbar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--gray-500);
+    font-size: 0.75rem;
+    padding: 0.5rem;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+}
+
+.navbar-item i {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.navbar-item.active {
+    color: var(--primary);
+    background-color: var(--gray-100);
+}
+
+.navbar-item.active span {
+    display: block; /* Aseguramos que el texto sea visible */
+}
+
+.navbar-item:hover {
+    color: var(--primary);
+}
+
+/* Media queries para tablets y escritorio */
+@media (min-width: 768px) {
+    /* Ajustes para el navbar superior en desktop */
+    .navbar {
+        position: fixed;
+        top: 0;
+        bottom: auto;
+        justify-content: space-between;
+        padding: 1rem 2rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .navbar-brand {
+        display: block;
+    }
+    
+    .navbar-brand h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--secondary);
+    }
+    
+    .navbar-brand span {
+        color: var(--primary);
+    }
+    
+    .navbar-menu {
+        width: auto;
+        gap: 1.5rem;
+    }
+    
+    .navbar-item {
+        flex-direction: row;
+        gap: 0.5rem;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .navbar-item i {
+        margin-bottom: 0;
+    }
+    
+    .navbar-item.active {
+        background-color: var(--primary);
+        color: white;
+    }
+}
+
+* Estilos para el menú hamburguesa y dropdown */
+.navbar-hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: var(--gray-500);
+    transition: all 0.2s ease;
+}
+
+.navbar-hamburger:hover {
+    color: var(--primary);
+}
+
+/* Menú desplegable */
+.dropdown-menu {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    padding: 0.5rem;
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    min-width: 180px;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--gray-700);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    width: 100%;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.dropdown-item i {
+    margin-right: 0.75rem;
+    width: 16px;
+    color: var(--gray-500);
+}
+
+.dropdown-item:hover {
+    background-color: var(--gray-100);
+    color: var(--primary);
+}
+
+.dropdown-item:hover i {
+    color: var(--primary);
+}
+
+/* Ajustes para móviles */
+@media (max-width: 767px) {
+    .dropdown-menu {
+        top: auto;
+        bottom: 70px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .navbar-hamburger {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .navbar-brand {
+        display: none;
+    }
+}

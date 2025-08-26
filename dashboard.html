@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +10,10 @@
     <link rel="stylesheet" href="css/components/modals.css">
     <link rel="stylesheet" href="css/pages/dashboard.css">
     <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/components/navbar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <!-- Navbar Superior -->
     <nav class="navbar">
@@ -30,16 +33,24 @@
                 <i class="fas fa-exchange-alt"></i>
                 <span>Transacciones</span>
             </a>
-            <a href="reports.html" class="navbar-item">
-                <i class="fas fa-chart-pie"></i>
-                <span>Reportes</span>
-            </a>
-            <a href="profile.html" class="navbar-item">
-                <i class="fas fa-user"></i>
-                <span>Perfil</span>
-            </a>
+            <!-- Eliminamos el item de perfil y agregamos el menú hamburguesa -->
+            <div class="navbar-hamburger" id="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </div>
         </div>
     </nav>
+
+    <!-- Menú desplegable -->
+    <div class="dropdown-menu" id="dropdown-menu">
+        <a href="profile.html" class="dropdown-item">
+            <i class="fas fa-user"></i>
+            <span>Perfil</span>
+        </a>
+        <button class="dropdown-item" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Cerrar sesión</span>
+        </button>
+    </div>
 
     <!-- Contenido Principal -->
     <main class="dashboard-container">
@@ -50,58 +61,31 @@
             </div>
             <div class="total-balance">
                 <h3>Balance Total</h3>
-                <p id="total-balance-amount">$12,450.75</p>
+                <p id="total-balance-amount">$0.00</p>
             </div>
         </header>
 
         <!-- Tarjetas Resumen -->
         <section class="summary-cards">
-            <div class="card">
+            <!-- Tarjeta de Ingresos -->
+            <div class="card centered-card">
                 <div class="card-header">
                     <h4>Ingresos del Mes</h4>
                     <i class="fas fa-arrow-up"></i>
                 </div>
                 <div class="card-body">
-                    <p class="amount income">$4,250.00</p>
-                    <div class="mini-chart" id="income-chart">
-                        <!-- Sparkline chart se generará con JavaScript -->
-                    </div>
+                    <p class="amount income">$0.00</p>
                 </div>
             </div>
 
-            <div class="card">
+            <!-- Tarjeta de Gastos -->
+            <div class="card centered-card">
                 <div class="card-header">
                     <h4>Gastos del Mes</h4>
                     <i class="fas fa-arrow-down"></i>
                 </div>
                 <div class="card-body">
-                    <p class="amount expense">$2,175.50</p>
-                    <div class="mini-chart" id="expense-chart">
-                        <!-- Sparkline chart se generará con JavaScript -->
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h4>Próximos Vencimientos</h4>
-                    <i class="fas fa-calendar-day"></i>
-                </div>
-                <div class="card-body">
-                    <ul class="due-list">
-                        <li>
-                            <span>Netflix</span>
-                            <span class="due-date today">Hoy</span>
-                        </li>
-                        <li>
-                            <span>Préstamo Auto</span>
-                            <span class="due-date soon">En 3 días</span>
-                        </li>
-                        <li>
-                            <span>Luz</span>
-                            <span class="due-date">En 5 días</span>
-                        </li>
-                    </ul>
+                    <p class="amount expense">$0.00</p>
                 </div>
             </div>
         </section>
@@ -115,69 +99,10 @@
                     <a href="transactions.html" class="view-all">Ver todas</a>
                 </div>
                 <div class="transactions-list" id="transactions-list">
-                    <div class="transaction-item">
-                        <div class="transaction-icon income">
-                            <i class="fas fa-money-check"></i>
-                        </div>
-                        <div class="transaction-details">
-                            <h4>Salario</h4>
-                            <p>12 Oct 2023 · Nómina</p>
-                        </div>
-                        <div class="transaction-amount positive">
-                            +$2,500.00
-                        </div>
-                    </div>
-                    
-                    <div class="transaction-item">
-                        <div class="transaction-icon expense">
-                            <i class="fas fa-shopping-cart"></i>
-                        </div>
-                        <div class="transaction-details">
-                            <h4>Supermercado</h4>
-                            <p>15 Oct 2023 · Alimentación</p>
-                        </div>
-                        <div class="transaction-amount negative">
-                            -$125.40
-                        </div>
-                    </div>
-                    
-                    <div class="transaction-item">
-                        <div class="transaction-icon expense">
-                            <i class="fas fa-gas-pump"></i>
-                        </div>
-                        <div class="transaction-details">
-                            <h4>Combustible</h4>
-                            <p>10 Oct 2023 · Transporte</p>
-                        </div>
-                        <div class="transaction-amount negative">
-                            -$45.00
-                        </div>
-                    </div>
-                    
-                    <div class="transaction-item">
-                        <div class="transaction-icon expense">
-                            <i class="fas fa-utensils"></i>
-                        </div>
-                        <div class="transaction-details">
-                            <h4>Restaurante</h4>
-                            <p>8 Oct 2023 · Ocio</p>
-                        </div>
-                        <div class="transaction-amount negative">
-                            -$68.30
-                        </div>
-                    </div>
-                    
-                    <div class="transaction-item">
-                        <div class="transaction-icon income">
-                            <i class="fas fa-gift"></i>
-                        </div>
-                        <div class="transaction-details">
-                            <h4>Regalo</h4>
-                            <p>5 Oct 2023 · Extra</p>
-                        </div>
-                        <div class="transaction-amount positive">
-                            +$100.00
-                        </div>
+                    <div class="no-data">
+                        <i class="fas fa-exchange-alt"></i>
+                        <p>No hay transacciones recientes</p>
+                        <a href="transactions.html" class="btn-link">Realizar transacción</a>
                     </div>
                 </div>
             </div>
@@ -189,72 +114,21 @@
                     <a href="accounts.html" class="view-all">Ver todas</a>
                 </div>
                 <div class="accounts-list">
-                    <div class="account-item">
-                        <div class="account-info">
-                            <div class="account-icon bank">
-                                <i class="fas fa-university"></i>
-                            </div>
-                            <div class="account-details">
-                                <h4>Banco Nacional</h4>
-                                <p>Cuenta Corriente</p>
-                            </div>
-                        </div>
-                        <div class="account-balance">
-                            $8,425.60
-                        </div>
-                    </div>
-                    
-                    <div class="account-item">
-                        <div class="account-info">
-                            <div class="account-icon wallet">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <div class="account-details">
-                                <h4>Billetera Digital</h4>
-                                <p>Efectivo disponible</p>
-                            </div>
-                        </div>
-                        <div class="account-balance">
-                            $2,150.30
-                        </div>
-                    </div>
-                    
-                    <div class="account-item">
-                        <div class="account-info">
-                            <div class="account-icon cash">
-                                <i class="fas fa-money-bill-wave"></i>
-                            </div>
-                            <div class="account-details">
-                                <h4>Efectivo</h4>
-                                <p>Dinero en mano</p>
-                            </div>
-                        </div>
-                        <div class="account-balance">
-                            $350.00
-                        </div>
+                    <div class="no-data">
+                        <i class="fas fa-wallet"></i>
+                        <p>No tienes cuentas registradas</p>
+                        <a href="accounts.html" class="btn-link">Agregar cuenta</a>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Botones de Acción Rápidos -->
-    <div class="floating-actions">
-        <button class="fab main-fab" id="main-fab">
-            <i class="fas fa-plus"></i>
-        </button>
-        <div class="fab-options">
-            <button class="fab-option" id="add-income">
-                <i class="fas fa-arrow-down"></i>
-                <span>Ingreso</span>
-            </button>
-            <button class="fab-option" id="add-expense">
-                <i class="fas fa-arrow-up"></i>
-                <span>Gasto</span>
-            </button>
-        </div>
-    </div>
-
     <!-- Scripts -->
+    <script src="./js/components/burguer.js"></script>
+    <script src="./js/services/utils.js"></script>
+    <script src="./js/services/api/api-client.js"></script>
+    <script src="./js/pages/dashboard.js"></script>
 </body>
+
 </html>
