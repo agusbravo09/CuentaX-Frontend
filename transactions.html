@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transacciones - FinanzApp</title>
+    <link rel="stylesheet" href="css/components/header.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/modals.css">
+    <link rel="stylesheet" href="css/pages/transactions.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/components/navbar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Navbar Superior -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1>Finanz<span>App</span></h1>
+        </div>
+        <div class="navbar-menu">
+            <a href="dashboard.html" class="navbar-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="accounts.html" class="navbar-item">
+                <i class="fas fa-wallet"></i>
+                <span>Cuentas</span>
+            </a>
+            <a href="transactions.html" class="navbar-item active">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transacciones</span>
+            </a>
+            <!-- Eliminamos el item de perfil y agregamos el menú hamburguesa -->
+            <div class="navbar-hamburger" id="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Menú desplegable -->
+    <div class="dropdown-menu" id="dropdown-menu">
+        <a href="profile.html" class="dropdown-item">
+            <i class="fas fa-user"></i>
+            <span>Perfil</span>
+        </a>
+        <button class="dropdown-item" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Cerrar sesión</span>
+        </button>
+    </div>
+
+    <!-- Contenido Principal -->
+    <main class="transactions-container">
+        <!-- Header con título y botones de acción -->
+        <header class="transactions-header">
+            <h2>Mis Transacciones</h2>
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="add-transaction-btn">
+                    <i class="fas fa-plus"></i>
+                    Nueva Transacción
+                </button>
+                <button class="btn btn-secondary" id="add-transfer-btn">
+                    <i class="fas fa-exchange-alt"></i>
+                    Transferencia Interna
+                </button>
+            </div>
+        </header>
+
+        <!-- Filtros y búsqueda -->
+        <section class="filters-section">
+            <div class="search-box">
+                <div class="input-with-icon">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-transactions" placeholder="Buscar transacciones...">
+                </div>
+            </div>
+            <div class="filter-options">
+                <select id="filter-type">
+                    <option value="">Todas las transacciones</option>
+                    <option value="INCOME">Ingresos</option>
+                    <option value="EGRESS">Gastos</option>
+                    <option value="TRANSFER">Transferencias</option>
+                </select>
+                <select id="filter-account">
+                    <option value="">Todas las cuentas</option>
+                    <!-- Las opciones se cargarán dinámicamente -->
+                </select>
+            </div>
+        </section>
+
+        <!-- Lista de transacciones -->
+        <section class="transactions-list" id="transactions-list">
+            <!-- Las transacciones se cargarán dinámicamente aquí -->
+            <div class="no-data">
+                <i class="fas fa-exchange-alt"></i>
+                <p>No tienes transacciones registradas</p>
+                <button class="btn btn-primary" id="first-transaction-btn">Agregar primera transacción</button>
+            </div>
+        </section>
+
+        <!-- Paginación -->
+        <div class="pagination" id="pagination">
+            <button class="btn btn-secondary" id="prev-page">Anterior</button>
+            <span id="page-info">Página 1 de 1</span>
+            <button class="btn btn-secondary" id="next-page">Siguiente</button>
+        </div>
+    </main>
+
+    <!-- Modal para agregar transacción -->
+    <div class="modal" id="transaction-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="transaction-modal-title">Nueva Transacción</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="transaction-form" autocomplete="off">
+                    <div class="form-group">
+                        <label for="transaction-type">Tipo de transacción</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                            <select id="transaction-type" required autocomplete="off">
+                                <option value="">Selecciona un tipo</option>
+                                <option value="INCOME">Ingreso</option>
+                                <option value="EGRESS">Gasto</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transaction-amount">Monto</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                            <input type="number" id="transaction-amount" step="0.01" placeholder="0.00" required autocomplete="off">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transaction-description">Descripción</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-align-left"></i>
+                            <input type="text" id="transaction-description" placeholder="Descripción de la transacción" required autocomplete="off">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transaction-date">Fecha</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-calendar"></i>
+                            <input type="date" id="transaction-date" required autocomplete="off">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transaction-account">Cuenta</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-wallet"></i>
+                            <select id="transaction-account" required autocomplete="off">
+                                <option value="">Selecciona una cuenta</option>
+                                <!-- Las opciones se cargarán dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transaction-category">Categoría</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-tag"></i>
+                            <select id="transaction-category" required autocomplete="off">
+                                <option value="">Selecciona una categoría</option>
+                                <!-- Las opciones se cargarán dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transaction-payment-method">Método de pago</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-credit-card"></i>
+                            <select id="transaction-payment-method" required autocomplete="off">
+                                <option value="">Selecciona un método de pago</option>
+                                <!-- Las opciones se cargarán dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full" id="save-transaction-btn">
+                        Guardar Transacción
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para transferencia interna -->
+    <div class="modal" id="transfer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nueva Transferencia Interna</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="transfer-form" autocomplete="off">
+                    <div class="form-group">
+                        <label for="transfer-amount">Monto</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                            <input type="number" id="transfer-amount" step="0.01" placeholder="0.00" required autocomplete="off">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transfer-origin-account">Cuenta de origen</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-arrow-up"></i>
+                            <select id="transfer-origin-account" required autocomplete="off">
+                                <option value="">Selecciona cuenta de origen</option>
+                                <!-- Las opciones se cargarán dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transfer-destination-account">Cuenta de destino</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-arrow-down"></i>
+                            <select id="transfer-destination-account" required autocomplete="off">
+                                <option value="">Selecciona cuenta de destino</option>
+                                <!-- Las opciones se cargarán dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full" id="save-transfer-btn">
+                        Realizar Transferencia
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content small-modal">
+            <div class="modal-header">
+                <h2>Confirmar Eliminación</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="confirmation-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <p>¿Estás seguro de que deseas eliminar la transacción <strong id="delete-transaction-description"></strong>?</p>
+                
+                <div class="delete-warning">
+                    <p><i class="fas fa-exclamation-circle"></i> Esta acción no se puede deshacer.</p>
+                </div>
+                
+                <div class="confirmation-buttons">
+                    <button class="btn btn-secondary" id="cancel-delete">Cancelar</button>
+                    <button class="btn btn-error" id="confirm-delete">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./js/components/burguer.js"></script>
+    <script src="./js/services/utils.js"></script>
+    <script src="./js/services/api/api-client.js"></script>
+    <script src="./js/pages/transactions.js"></script>
+</body>
+
+</html>

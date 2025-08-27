@@ -172,11 +172,11 @@ function updateAccounts(accounts) {
     accounts.forEach(account => {
         // Determinar icono según el tipo de cuenta
         let iconClass = 'fa-university'; // Por defecto
-        let accountType = 'Cuenta bancaria';
+        let accountType = 'Cuenta Bancaria';
         let iconBackground = 'bank';
         if (account.type && account.type.toLowerCase().includes('wallet')) {
             iconClass = 'fa-wallet';
-            accountType = 'Billetera virtual';
+            accountType = 'Billetera Virtual';
             iconBackground = 'wallet';
         } else if (account.type && account.type.toLowerCase().includes('cash')) {
             iconClass = 'fa-money-bill-wave';
@@ -226,7 +226,7 @@ function updateRecentTransactions(transactions) {
     transactions.forEach(transaction => {
         // Determinar si es ingreso o gasto
         const isIncome = transaction.type && transaction.type.toLowerCase() === 'income';
-        const iconClass = isIncome ? 'fa-arrow-up income' : 'fa-arrow-down expense';
+        const iconClass = isIncome ? 'fa-arrow-down income' : 'fa-arrow-up expense';
         const amountClass = isIncome ? 'positive' : 'negative';
         const amountPrefix = isIncome ? '+' : '-';
         

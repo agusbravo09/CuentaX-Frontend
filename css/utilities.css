@@ -10,7 +10,6 @@ body {
     background-color: #f8fafc;
     display: flex;
     justify-content: center;
-    align-items: center;
     min-height: 100vh;
     color: #334155;
     padding: 1rem;

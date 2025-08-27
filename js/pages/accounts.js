@@ -280,7 +280,7 @@ function updateAccountsList(accounts) {
         }
         
         // Formatear fecha de creación
-        const createdDate = account.createdAt ? formatDate(account.createdAt) : 'Fecha no disponible';
+        const createdDate = account.createdAt ? formatDateAccounts(account.createdAt) : 'Fecha no disponible';
         
         accountsHTML += `
             <div class="account-card ${typeClass}">

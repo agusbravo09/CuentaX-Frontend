@@ -336,7 +336,7 @@ body {
 }
 
 .transaction-icon.expense {
-    background-color: var(--secondary);
+    background-color: var(--error);
 }
 
 .transaction-details {

@@ -43,10 +43,32 @@ function formatCurrency(amount) {
 }
 
 function formatDate(dateString) {
+    if (!dateString) return 'Fecha no disponible';
+    
     try {
-        const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-        return new Date(dateString).toLocaleDateString('es-ES', options);
+        // Crear fecha en UTC para evitar problemas de huso horario
+        const date = new Date(dateString + 'T00:00:00Z');
+        
+        // Formatear a dd/mm/aaaa
+        const day = date.getUTCDate().toString().padStart(2, '0');
+        const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+        const year = date.getUTCFullYear();
+        
+        return `${day}/${month}/${year}`;
     } catch (error) {
+        console.error('Error formateando fecha:', error, dateString);
+        return 'Fecha inválida';
+    }
+}
+function formatDateAccounts(dateString) {
+    if (!dateString) return 'Fecha no disponible';
+    
+    try {
+        // Dividir la fecha ISO directamente (YYYY-MM-DD)
+        const [year, month, day] = dateString.split('T')[0].split('-');
+        return `${day}/${month}/${year}`;
+    } catch (error) {
+        console.error('Error formateando fecha de cuenta:', error, dateString);
         return 'Fecha inválida';
     }
 }

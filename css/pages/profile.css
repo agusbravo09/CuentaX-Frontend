@@ -1,0 +1,317 @@
+/* profile.css - Estilos para la sección de perfil */
+.profile-container {
+    padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding-bottom: 80px;
+    padding-top: 0;
+    margin-top: 0;
+    box-sizing: border-box;
+}
+
+.profile-header {
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.profile-header h2 {
+    font-size: 1.75rem;
+    color: var(--gray-800);
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+}
+
+.profile-header p {
+    color: var(--gray-500);
+    margin: 0;
+    font-size: 1rem;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.profile-avatar {
+    margin-bottom: 2rem;
+}
+
+.avatar-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #297c79, #2563EB);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: white;
+    font-size: 2rem;
+}
+
+.profile-form {
+    text-align: left;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.form-actions .btn {
+    min-width: 120px;
+}
+
+/* Información de la cuenta */
+.account-info {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.account-info h3 {
+    font-size: 1.25rem;
+    color: var(--gray-800);
+    margin: 0 0 1.5rem;
+    font-weight: 600;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border-left: 4px solid #297c79;
+}
+
+.info-item i {
+    font-size: 1.5rem;
+    color: #297c79;
+    width: 40px;
+    text-align: center;
+}
+
+.info-content {
+    flex: 1;
+}
+
+.info-label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--gray-500);
+    margin-bottom: 0.25rem;
+}
+
+.info-value {
+    display: block;
+    font-size: 1.125rem;
+    color: var(--gray-800);
+    font-weight: 600;
+}
+
+/* Estados de edición */
+.editing .profile-avatar {
+    opacity: 0.7;
+}
+
+/* Sección de contraseña */
+.password-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border-left: 4px solid #2563EB;
+}
+
+.password-section h4 {
+    font-size: 1.125rem;
+    color: var(--gray-800);
+    margin: 0 0 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.password-section h4 i {
+    color: #2563EB;
+}
+
+/* Indicador de fortaleza de contraseña */
+.password-strength {
+    margin-top: 0.5rem;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.strength-meter {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-weak { background-color: #EF4444; width: 33%; }
+.strength-medium { background-color: #F59E0B; width: 66%; }
+.strength-strong { background-color: #10B981; width: 100%; }
+
+.password-feedback {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    color: var(--gray-500);
+}
+
+.password-match {
+    color: #10B981;
+    font-weight: 600;
+}
+
+.password-mismatch {
+    color: #EF4444;
+    font-weight: 600;
+}
+
+/* Toggle para mostrar contraseña */
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--gray-400);
+    cursor: pointer;
+    padding: 4px;
+    font-size: 0.875rem;
+}
+
+.password-toggle:hover {
+    color: var(--gray-600);
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon .password-toggle {
+    right: 35px; /* Ajustar para que no se superponga con el icono */
+}
+
+/* Media queries para tablets y escritorio */
+@media (min-width: 768px) {
+    .profile-container {
+        padding: 2rem;
+        padding-bottom: 2rem;
+        padding-top: 6rem;
+        max-width: none;
+        width: 75%;
+        margin-top: 0;
+    }
+    
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .info-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .profile-card,
+    .account-info {
+        padding: 2.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .profile-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+}
+
+/* Ajustes para móviles pequeños */
+@media (max-width: 480px) {
+    .profile-container {
+        padding: 0.75rem;
+        padding-bottom: 80px;
+    }
+    
+    .profile-card,
+    .account-info {
+        padding: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .info-item i {
+        width: auto;
+    }
+        .password-section {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .password-section h4 {
+        font-size: 1rem;
+    }
+}
+
+/* Estados de carga */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #297c79;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
