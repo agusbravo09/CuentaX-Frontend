@@ -1,0 +1,335 @@
+/* accounts.css - Estilos para la sección de cuentas */
+:root {
+    --bank-color: #297c79;
+    --wallet-color: #2563EB;
+    --cash-color: #F59E0B;
+    --edit-color: #F59E0B;
+    --delete-color: #EF4444;
+}
+
+.accounts-container {
+    padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding-bottom: 80px;
+    padding-top: 0;
+    margin-top: 0;
+    box-sizing: border-box;
+}
+
+.accounts-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.accounts-header h2 {
+    font-size: 1.75rem;
+    color: var(--gray-800);
+    margin: 0;
+    font-weight: 700;
+}
+
+#add-account-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--bank-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#add-account-btn:hover {
+    background-color: #1e5f5c;
+}
+
+.accounts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.account-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    border-left: 6px solid;
+}
+
+.account-card.bank {
+    border-left-color: var(--bank-color);
+}
+
+.account-card.virtual_wallet {
+    border-left-color: var(--wallet-color);
+}
+
+.account-card.cash {
+    border-left-color: var(--cash-color);
+}
+
+.account-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.account-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.account-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.account-icon.bank {
+    background-color: var(--bank-color);
+}
+
+.account-icon.virtual_wallet {
+    background-color: var(--wallet-color);
+}
+
+.account-icon.cash {
+    background-color: var(--cash-color);
+}
+
+.account-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.account-action-btn {
+    background: none;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.account-action-btn.edit {
+    color: var(--edit-color);
+    border: 1px solid var(--edit-color);
+}
+
+.account-action-btn.edit:hover {
+    background-color: var(--edit-color);
+    color: white;
+}
+
+.account-action-btn.delete {
+    color: var(--delete-color);
+    border: 1px solid var(--delete-color);
+}
+
+.account-action-btn.delete:hover {
+    background-color: var(--delete-color);
+    color: white;
+}
+
+.account-info {
+    margin-bottom: 1.5rem;
+}
+
+.account-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0 0 0.5rem;
+}
+
+.account-type {
+    font-size: 0.875rem;
+    color: var(--gray-500);
+    margin: 0 0 0.5rem;
+    text-transform: capitalize;
+}
+
+.account-balance {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--gray-800);
+    margin: 0;
+}
+
+.account-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.account-date {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+/* Estados vacíos */
+.no-data {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--gray-500);
+    grid-column: 1 / -1;
+}
+
+.no-data i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--gray-300);
+}
+
+.no-data p {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+/* Modal específico para cuentas */
+#account-form select {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 15px;
+    appearance: none;
+    background-color: white;
+}
+
+#account-form select:focus {
+    outline: none;
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* Modal de confirmación */
+.confirmation-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+.btn-error {
+    background-color: var(--delete-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-error:hover {
+    background-color: #dc2626;
+}
+
+.btn-secondary {
+    background-color: var(--gray-300);
+    color: var(--gray-800);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--gray-400);
+}
+
+.delete-warning {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #7f1d1d;
+}
+
+.delete-warning i {
+    color: var(--delete-color);
+    margin-right: 0.5rem;
+}
+
+/* Media queries para tablets y escritorio */
+@media (min-width: 768px) {
+    .accounts-container {
+        padding: 2rem;
+        padding-bottom: 2rem;
+        padding-top: 6rem;
+        max-width: none;
+        width: 75%;
+        margin-top: 0;
+    }
+    
+    .accounts-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+    
+    .accounts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .accounts-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Ajustes para móviles pequeños */
+@media (max-width: 480px) {
+    .accounts-container {
+        padding: 0.75rem;
+        padding-bottom: 80px;
+    }
+    
+    .account-card {
+        padding: 1.25rem;
+    }
+    
+    .account-balance {
+        font-size: 1.25rem;
+    }
+    
+    .confirmation-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-error, .btn-secondary {
+        width: 100%;
+    }
+}
