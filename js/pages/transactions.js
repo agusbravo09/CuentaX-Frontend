@@ -572,31 +572,41 @@ function closeModals() {
 
 // Obtener todas las transacciones (normales + transferencias)
 function getAllTransactions() {
+    // Formatear transferencias internas para que coincidan con el formato de transacciones
     const transferTransactions = internalTransfersData.map(transfer => ({
         id: transfer.id,
         type: 'TRANSFER',
         amount: transfer.amount,
-        description: `${transfer.originAccountName} → ${transfer.destinationAccountName}`,
+        description: `Origen: ${transfer.originAccountName || 'Cuenta origen'} → Destino: ${transfer.destinationAccountName || 'Cuenta destino'}`,
         date: transfer.date,
-        accountName: transfer.originAccountName,
-        categoryName: 'Transferencia',
+        accountName: transfer.originAccountName || 'Cuenta origen',
+        categoryName: 'Transferencia Interna',
         paymentMethodName: 'Transferencia Interna',
-        isInternalTransfer: true,
+        isTransfer: true,
         transferData: transfer
     }));
 
+    // Combinar y ordenar por fecha (más recientes primero)
     const allTransactions = [...transactionsData, ...transferTransactions];
     
-    return allTransactions.sort((a, b) => b.id - a.id);
+    // Ordenar por ID de forma descendente (los más nuevos primero)
+    return allTransactions.sort((a, b) => {
+        // Si ambos tienen ID numérico, ordenar por ID
+        if (a.id && b.id) {
+            return b.id - a.id;
+        }
+        // Si no, ordenar por fecha (más reciente primero)
+        const dateA = a.date ? new Date(a.date) : new Date(0);
+        const dateB = b.date ? new Date(b.date) : new Date(0);
+        return dateB - dateA;
+    });
 }
 
-// Filtrar transacciones - CORREGIDO
+// Filtrar transacciones - VERSIÓN CORREGIDA
 function filterTransactions() {
     const searchTerm = document.getElementById('search-transactions').value.toLowerCase();
     const typeFilterValue = document.getElementById('filter-type').value;
-    const accountFilter = document.getElementById('filter-account');
-    const accountFilterValue = accountFilter.value;
-    const accountFilterText = accountFilter.options[accountFilter.selectedIndex].text;
+    const accountFilterValue = document.getElementById('filter-account').value;
     
     let allTransactions = getAllTransactions();
     let filteredTransactions = allTransactions;
@@ -609,12 +619,18 @@ function filterTransactions() {
     }
     
     if (typeFilterValue) {
-        filteredTransactions = filteredTransactions.filter(transaction =>
-            transaction.type === typeFilterValue
-        );
+        if (typeFilterValue === 'TRANSFER') {
+            filteredTransactions = filteredTransactions.filter(transaction =>
+                transaction.type === 'TRANSFER' || transaction.isTransfer
+            );
+        } else {
+            filteredTransactions = filteredTransactions.filter(transaction =>
+                transaction.type === typeFilterValue && !transaction.isTransfer
+            );
+        }
     }
-
-if (accountFilterValue) {
+    
+    if (accountFilterValue) {
         // Obtener el nombre de la cuenta seleccionada
         const accountOption = document.querySelector(`#filter-account option[value="${accountFilterValue}"]`);
         const accountName = accountOption ? accountOption.textContent : '';
@@ -624,10 +640,12 @@ if (accountFilterValue) {
         );
     }
     
+    // Reiniciar a página 1 cuando se filtran resultados
+    currentPage = 1;
     updateTransactionsList(filteredTransactions);
 }
 
-// Actualizar lista de transacciones en la UI - MODIFICADO
+// Actualizar lista de transacciones en la UI - VERSIÓN CORREGIDA
 function updateTransactionsList(transactions = null) {
     const transactionsList = document.getElementById('transactions-list');
     const pagination = document.getElementById('pagination');
@@ -640,7 +658,7 @@ function updateTransactionsList(transactions = null) {
     // Usar transacciones proporcionadas o todas
     const displayTransactions = transactions || getAllTransactions();
     
-    // Calcular paginación
+    // Calcular paginación (10 transacciones por página)
     const totalPages = Math.ceil(displayTransactions.length / transactionsPerPage);
     const startIndex = (currentPage - 1) * transactionsPerPage;
     const endIndex = startIndex + transactionsPerPage;
@@ -677,23 +695,26 @@ function updateTransactionsList(transactions = null) {
         let typeClass = '';
         let iconClass = '';
         
-        if (transaction.type === 'INCOME') {
+        if (transaction.type === 'INCOME' || transaction.transactionType === 'INCOME') {
             typeClass = 'income';
             iconClass = 'fa-arrow-down'; // Entrada de dinero
-        } else if (transaction.type === 'EGRESS') {
+        } else if (transaction.type === 'EGRESS' || transaction.transactionType === 'EGRESS') {
             typeClass = 'expense';
             iconClass = 'fa-arrow-up'; // Salida de dinero
-        } else if (transaction.type === 'TRANSFER') {
+        } else if (transaction.type === 'TRANSFER' || transaction.isTransfer) {
             typeClass = 'transfer';
             iconClass = 'fa-exchange-alt';
         }
         
         // Formatear fecha
         const transactionDate = transaction.date ? formatDate(transaction.date) : 'Fecha no disponible';
-        console.log(transaction.date);
         
         // Obtener nombre de la cuenta
         const accountName = transaction.accountName || 'Cuenta no disponible';
+        
+        // Obtener nombre de categoría
+        const categoryName = transaction.categoryName || 
+                            (transaction.categoryId ? getCategoryName(transaction.categoryId) : 'Sin categoría');
         
         transactionsHTML += `
 <div class="transaction-item ${typeClass}">
@@ -705,15 +726,15 @@ function updateTransactionsList(transactions = null) {
         <div class="transaction-meta">
             <span><i class="fas fa-calendar"></i> ${transactionDate}</span>
             <span><i class="fas fa-wallet"></i> ${accountName}</span>
-            ${transaction.categoryName ? `<span><i class="fas fa-tag"></i> ${transaction.categoryName}</span>` : ''}
+            ${categoryName ? `<span><i class="fas fa-tag"></i> ${categoryName}</span>` : ''}
             ${transaction.paymentMethodName ? `<span class="payment-badge"><i class="fas fa-credit-card"></i> ${transaction.paymentMethodName}</span>` : ''}
         </div>
     </div>
     <div class="transaction-amount ${typeClass}">
-        ${transaction.type === 'EGRESS' || transaction.type === 'TRANSFER' ? '-' : ''}${formatCurrency(transaction.amount || 0)}
+        ${typeClass === 'expense' || typeClass === 'transfer' ? '-' : '+'}${formatCurrency(transaction.amount || 0)}
     </div>
     <div class="transaction-actions">
-        <button class="transaction-action-btn delete" data-id="${transaction.id}" data-is-transfer="${transaction.isInternalTransfer || false}">
+        <button class="transaction-action-btn delete" data-id="${transaction.id}" data-is-transfer="${transaction.isTransfer || false}">
             <i class="fas fa-trash"></i>
         </button>
     </div>
@@ -726,9 +747,9 @@ function updateTransactionsList(transactions = null) {
     // Actualizar información de paginación
     pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
     prevPageBtn.disabled = currentPage === 1;
-    nextPageBtn.disabled = currentPage === totalPages;
+    nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
     
-    // Agregar eventos a los botones de eliminar - MODIFICADO
+    // Agregar eventos a los botones de eliminar
     const deleteButtons = document.querySelectorAll('.transaction-action-btn.delete');
     deleteButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -745,7 +766,7 @@ function getCategoryName(categoryId) {
     return category ? category.name : 'Categoría desconocida';
 }
 
-// Guardar transacción
+// Guardar transacción - CON VALIDACIÓN DE BALANCE
 async function saveTransaction() {
     const saveButton = document.getElementById('save-transaction-btn');
     const type = document.getElementById('transaction-type').value;
@@ -756,7 +777,7 @@ async function saveTransaction() {
     const categoryId = document.getElementById('transaction-category').value;
     const paymentMethodId = document.getElementById('transaction-payment-method').value;
     
-    // Validaciones
+    // Validaciones básicas
     if (!type) {
         showNotification('Debes seleccionar un tipo de transacción', 'error');
         return;
@@ -798,6 +819,24 @@ async function saveTransaction() {
         saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         saveButton.disabled = true;
         
+        // VALIDACIÓN DE BALANCE - Solo para gastos
+        if (type === 'EGRESS') {
+            const account = accountsData.find(acc => acc.id == accountId);
+            if (account) {
+                // Obtener el balance actualizado de la cuenta
+                const currentBalance = await accountService.getAccountBalance(accountId);
+                
+                if (currentBalance !== null && currentBalance < amount) {
+                    showNotification(`Saldo insuficiente. Balance disponible en la cuenta: ${formatCurrency(currentBalance)}`, 'error');
+                    
+                    // Restaurar estado del botón
+                    saveButton.innerHTML = 'Guardar Transacción';
+                    saveButton.disabled = false;
+                    return;
+                }
+            }
+        }
+        
         const transactionData = {
             type: type,
             amount: amount,
@@ -828,14 +867,14 @@ async function saveTransaction() {
     }
 }
 
-// Guardar transferencia
+// Guardar transferencia - CON VALIDACIÓN DE BALANCE
 async function saveTransfer() {
     const saveButton = document.getElementById('save-transfer-btn');
     const amount = parseFloat(document.getElementById('transfer-amount').value);
     const originAccountId = document.getElementById('transfer-origin-account').value;
     const destinationAccountId = document.getElementById('transfer-destination-account').value;
     
-    // Validaciones
+    // Validaciones básicas
     if (isNaN(amount) || amount <= 0) {
         showNotification('El monto debe ser un número válido y mayor a 0', 'error');
         return;
@@ -861,6 +900,22 @@ async function saveTransfer() {
         const originalText = saveButton.innerHTML;
         saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
         saveButton.disabled = true;
+        
+        // VALIDACIÓN DE BALANCE - Para transferencias
+        const originAccount = accountsData.find(acc => acc.id == originAccountId);
+        if (originAccount) {
+            // Obtener el balance actualizado de la cuenta de origen
+            const currentBalance = await accountService.getAccountBalance(originAccountId);
+            
+            if (currentBalance !== null && currentBalance < amount) {
+                showNotification(`Saldo insuficiente en la cuenta de origen. Balance disponible: ${formatCurrency(currentBalance)}`, 'error');
+                
+                // Restaurar estado del botón
+                saveButton.innerHTML = 'Realizar Transferencia';
+                saveButton.disabled = false;
+                return;
+            }
+        }
         
         // Crear el objeto para la transferencia interna
         const transferData = {

@@ -287,6 +287,145 @@
     gap: 4px;
 }
 
+/* Estilos mejorados para el modal de confirmación */
+.modal.small-modal {
+    max-width: 450px;
+}
+
+.modal-content.small-modal {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    color: white;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.close-modal:hover {
+    opacity: 0.8;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.confirmation-icon {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.confirmation-icon i {
+    font-size: 3rem;
+    color: #ffc107;
+}
+
+.modal-body p {
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    color: #495057;
+}
+
+.delete-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.delete-warning p {
+    margin: 0;
+    color: #856404;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.confirmation-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.confirmation-buttons .btn {
+    min-width: 120px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.confirmation-buttons .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.confirmation-buttons .btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+.confirmation-buttons .btn-error {
+    background-color: #dc3545;
+    color: white;
+}
+
+.confirmation-buttons .btn-error:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+/* Efectos de hover para todos los botones */
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .modal.small-modal {
+        max-width: 90%;
+        margin: 1rem auto;
+    }
+    
+    .confirmation-buttons {
+        flex-direction: column;
+    }
+    
+    .confirmation-buttons .btn {
+        width: 100%;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+}
+
 /* Media queries para tablets y escritorio */
 @media (min-width: 768px) {
     .transactions-container {

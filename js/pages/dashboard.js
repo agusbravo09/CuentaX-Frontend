@@ -1,4 +1,4 @@
-// dashboard.js - Versión simplificada sin préstamos ni servicios
+// dashboard.js - Versión mejorada con transferencias y top 3 cuentas
 console.log('Dashboard cargado');
 
 // Variables globales
@@ -99,12 +99,12 @@ async function loadDashboardData() {
         // 2. Actualizar UI con datos del usuario
         updateUserInfo(userData);
         
-        // 3. Cargar cuentas del usuario
+        // 3. Cargar cuentas del usuario y mostrar solo las 3 con mayor saldo
         const accounts = await accountService.getAccountsByUserId(userData.id);
         updateAccounts(accounts);
         
-        // 4. Cargar transacciones recientes
-        const transactions = await transactionService.getRecentTransactions(userData.id, 5);
+        // 4. Cargar transacciones recientes (incluyendo transferencias)
+        const transactions = await getRecentTransactionsWithTransfers(userData.id, 5);
         updateRecentTransactions(transactions);
         
         // 5. Calcular y mostrar resumen financiero
@@ -117,6 +117,49 @@ async function loadDashboardData() {
         console.error('Error cargando datos del dashboard:', error);
         showNotification('Error al cargar datos del dashboard', 'error');
         showLoadingState(false);
+    }
+}
+
+// Obtener transacciones recientes incluyendo transferencias internas
+async function getRecentTransactionsWithTransfers(userId, limit = 5) {
+    try {
+        // Obtener transacciones normales
+        const transactions = await transactionService.getRecentTransactions(userId, 20); // Obtener más para combinar
+        
+        // Obtener transferencias internas
+        const internalTransfers = await internalTransferService.getAllInternalTransfers() || [];
+        
+        // Formatear transferencias para que coincidan con el formato de transacciones
+        const formattedTransfers = internalTransfers.map(transfer => ({
+            id: transfer.id,
+            type: 'TRANSFER',
+            amount: transfer.amount,
+            description: `Transferencia: ${transfer.originAccountName || 'Cuenta origen'} → ${transfer.destinationAccountName || 'Cuenta destino'}`,
+            date: transfer.date,
+            categoryName: 'Transferencia Interna',
+            isTransfer: true,
+            // Para ordenamiento por fecha
+            timestamp: new Date(transfer.date).getTime()
+        }));
+        
+        // Formatear transacciones normales para ordenamiento
+        const formattedTransactions = transactions.map(transaction => ({
+            ...transaction,
+            // Para ordenamiento por fecha
+            timestamp: transaction.date ? new Date(transaction.date).getTime() : 0,
+            isTransfer: false
+        }));
+        
+        // Combinar y ordenar por fecha (más recientes primero)
+        const allTransactions = [...formattedTransactions, ...formattedTransfers]
+            .sort((a, b) => b.timestamp - a.timestamp)
+            .slice(0, limit);
+        
+        return allTransactions;
+    } catch (error) {
+        console.error('Error obteniendo transacciones con transferencias:', error);
+        // Si hay error, devolver solo transacciones normales
+        return await transactionService.getRecentTransactions(userId, limit) || [];
     }
 }
 
@@ -151,7 +194,7 @@ function updateGreeting() {
     }
 }
 
-// Actualizar lista de cuentas
+// Actualizar lista de cuentas (mostrar solo las 3 con mayor saldo)
 function updateAccounts(accounts) {
     const accountsList = document.querySelector('.accounts-list');
     if (!accountsList) return;
@@ -167,9 +210,14 @@ function updateAccounts(accounts) {
         return;
     }
     
+    // Ordenar cuentas por saldo (mayor a menor) y tomar las primeras 3
+    const topAccounts = [...accounts]
+        .sort((a, b) => (b.currentBalance || 0) - (a.currentBalance || 0))
+        .slice(0, 4);
+    
     let accountsHTML = '';
     
-    accounts.forEach(account => {
+    topAccounts.forEach(account => {
         // Determinar icono según el tipo de cuenta
         let iconClass = 'fa-university'; // Por defecto
         let accountType = 'Cuenta Bancaria';
@@ -202,10 +250,20 @@ function updateAccounts(accounts) {
         `;
     });
     
+    // Si hay más de 3 cuentas, mostrar mensaje
+    if (accounts.length > 3) {
+        accountsHTML += `
+            <div class="more-accounts">
+                <p>Y ${accounts.length - 4} cuenta(s) más...</p>
+                <a href="accounts.html" class="btn-link">Ver todas</a>
+            </div>
+        `;
+    }
+    
     accountsList.innerHTML = accountsHTML;
 }
 
-// Actualizar transacciones recientes
+// Actualizar transacciones recientes (incluyendo transferencias)
 function updateRecentTransactions(transactions) {
     const transactionsList = document.getElementById('transactions-list');
     if (!transactionsList) return;
@@ -224,18 +282,32 @@ function updateRecentTransactions(transactions) {
     let transactionsHTML = '';
     
     transactions.forEach(transaction => {
-        // Determinar si es ingreso o gasto
-        const isIncome = transaction.type && transaction.type.toLowerCase() === 'income';
-        const iconClass = isIncome ? 'fa-arrow-down income' : 'fa-arrow-up expense';
-        const amountClass = isIncome ? 'positive' : 'negative';
-        const amountPrefix = isIncome ? '+' : '-';
+        // Determinar si es ingreso, gasto o transferencia
+        let typeClass, iconClass, amountClass, amountPrefix;
+        
+        if (transaction.type === 'TRANSFER' || transaction.isTransfer) {
+            typeClass = 'transfer';
+            iconClass = 'fa-exchange-alt transfer';
+            amountClass = 'transfer';
+            amountPrefix = '⇄ ';
+        } else {
+            const isIncome = transaction.type && (
+                transaction.type.toLowerCase() === 'income' || 
+                transaction.type.toLowerCase() === 'ingreso' ||
+                transaction.transactionType === 'INCOME'
+            );
+            typeClass = isIncome ? 'income' : 'expense';
+            iconClass = isIncome ? 'fa-arrow-down income' : 'fa-arrow-up expense';
+            amountClass = isIncome ? 'positive' : 'negative';
+            amountPrefix = isIncome ? '+' : '-';
+        }
         
         // Formatear fecha
         const transactionDate = transaction.date ? formatDate(transaction.date) : 'Fecha no disponible';
         
         transactionsHTML += `
-            <div class="transaction-item">
-                <div class="transaction-icon ${isIncome ? 'income' : 'expense'}">
+            <div class="transaction-item ${typeClass}">
+                <div class="transaction-icon ${typeClass}">
                     <i class="fas ${iconClass}"></i>
                 </div>
                 <div class="transaction-details">
@@ -288,17 +360,19 @@ async function updateFinancialSummary(accounts, transactions) {
             
             // Verificar si la transacción es del mes actual
             if (transactionDate >= startOfMonth && transactionDate <= endOfMonth) {
-                // Determinar si es ingreso o gasto
-                const isIncome = transaction.type && (
-                    transaction.type.toLowerCase() === 'income' || 
-                    transaction.type.toLowerCase() === 'ingreso' ||
-                    transaction.transactionType === 'INCOME'
-                );
-                
-                if (isIncome) {
-                    monthlyIncome += transaction.amount || 0;
-                } else {
-                    monthlyExpenses += transaction.amount || 0;
+                // Determinar si es ingreso o gasto (excluir transferencias)
+                if (!transaction.isTransfer && transaction.type !== 'TRANSFER') {
+                    const isIncome = transaction.type && (
+                        transaction.type.toLowerCase() === 'income' || 
+                        transaction.type.toLowerCase() === 'ingreso' ||
+                        transaction.transactionType === 'INCOME'
+                    );
+                    
+                    if (isIncome) {
+                        monthlyIncome += transaction.amount || 0;
+                    } else {
+                        monthlyExpenses += transaction.amount || 0;
+                    }
                 }
             }
         });

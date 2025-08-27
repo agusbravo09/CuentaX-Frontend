@@ -634,6 +634,115 @@ body {
     text-decoration: underline;
 }
 
+/* Estilos para transferencias en el dashboard */
+.transaction-item.transfer {
+    border-left: 4px solid #ffc107;
+}
+
+.transaction-icon.transfer {
+    background-color: #fff3cd;
+    color: #ffc107;
+}
+
+.transaction-amount.transfer {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.more-accounts {
+    text-align: center;
+    padding: 15px;
+    border-top: 1px solid #e9ecef;
+    margin-top: 10px;
+}
+
+.more-accounts p {
+    margin-bottom: 8px;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.more-accounts .btn-link {
+    font-size: 0.9rem;
+}
+
+/* Ajustes para las 3 cuentas principales */
+.accounts-list .account-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* Estilos para transferencias en el dashboard */
+.transaction-item.transfer {
+    border-left: 4px solid #ffc107;
+}
+
+.transaction-icon.transfer {
+    background-color: #fff3cd;
+    color: #ffc107;
+}
+
+.transaction-amount.transfer {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.more-accounts {
+    text-align: center;
+    padding: 15px;
+    border-top: 1px solid #e9ecef;
+    margin-top: 10px;
+}
+
+.more-accounts p {
+    margin-bottom: 8px;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.more-accounts .btn-link {
+    font-size: 0.9rem;
+}
+
+/* Ajustes para las 3 cuentas principales */
+.accounts-list .account-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* Estado de carga */
+body.loading {
+    cursor: wait;
+}
+
+body.loading::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body.loading::before {
+    content: 'Cargando...';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    background: #4361ee;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
 /* Media queries para tablets y escritorio */
 @media (min-width: 768px) {
     /* Ajustar el contenedor principal para que quede debajo del navbar */

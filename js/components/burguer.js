@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('currentUser');
             
             // Redirigir al login
-            window.location.href = 'login.html';
+            window.location.href = 'index.html';
         });
     }
 });
