@@ -1,7 +1,7 @@
 // api-client.js - Cliente API completo
 console.log('API Client cargado');
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = 'https://finanzapp-backend-a1rz.onrender.com';
 
 // Función para obtener el header de autenticación
 function getAuthHeader() {

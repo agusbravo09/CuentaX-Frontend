@@ -257,6 +257,14 @@ async function loadInitialData() {
         await loadAccounts(userData.id);
         console.log('Cuentas cargadas:', accountsData.length);
         
+        // VERIFICAR SI HAY CUENTAS ANTES DE CARGAR EL RESTO
+        if (accountsData.length === 0) {
+            // No hay cuentas, mostrar estado vacío y salir
+            updateUI();
+            showLoadingState(false);
+            return;
+        }
+
         // Luego cargar el resto de datos en paralelo
         await Promise.all([
             loadTransactions(userData.id),
@@ -329,6 +337,7 @@ async function loadAccounts(userId) {
         if (accountsData.length === 0) {
             console.warn('No se encontraron cuentas para el usuario');
             showNotification('No tienes cuentas registradas. Crea una cuenta primero.', 'warning');
+            
         }
     } catch (error) {
         console.error('Error cargando cuentas:', error);

@@ -385,11 +385,12 @@ async function saveAccount() {
                 backendAccountType = accountType.toUpperCase();
         }
         
+        // FORMATO MÍNIMO - solo enviar lo esencial
         const accountData = {
             name: accountName,
             currentBalance: accountBalance,
             type: backendAccountType,
-            userId: userData.id  // Solo enviar el ID, no el objeto completo
+            userId: userData.id
         };
         
         console.log('Enviando datos al backend:', accountData);
@@ -397,8 +398,15 @@ async function saveAccount() {
         let result;
         
         if (accountId) {
-            // Actualizar cuenta existente
-            result = await accountService.updateAccount(accountId, accountData);
+            // Actualizar cuenta existente - NO enviar campos de fecha
+            const updateData = {
+                name: accountName,
+                currentBalance: accountBalance,
+                type: backendAccountType
+                // No enviar userId en updates
+            };
+            
+            result = await accountService.updateAccount(accountId, updateData);
             if (result) {
                 showNotification('Cuenta actualizada correctamente', 'success');
             }
@@ -416,7 +424,9 @@ async function saveAccount() {
         
     } catch (error) {
         console.error('Error guardando cuenta:', error);
-        showNotification('Error al guardar la cuenta', 'error');
+        // Mostrar mensaje de error más específico
+        const errorMessage = error.message || 'Error al guardar la cuenta. Verifica la consola para más detalles.';
+        showNotification(errorMessage, 'error');
     } finally {
         // Restaurar estado del botón
         saveButton.innerHTML = 'Guardar Cuenta';

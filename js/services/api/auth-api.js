@@ -1,7 +1,7 @@
 // auth-api.js - Servicio de autenticación
 console.log('Auth API cargado');
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = 'https://finanzapp-backend-a1rz.onrender.com';
 
 // Función para login
 async function login(email, password) {

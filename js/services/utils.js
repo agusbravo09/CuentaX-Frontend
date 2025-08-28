@@ -41,18 +41,23 @@ function formatCurrency(amount) {
     const num = parseFloat(amount) || 0;
     return '$' + num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 }
-
 function formatDate(dateString) {
     if (!dateString) return 'Fecha no disponible';
     
     try {
-        // Crear fecha en UTC para evitar problemas de huso horario
-        const date = new Date(dateString + 'T00:00:00Z');
+        // Intentar parsear la fecha directamente
+        const date = new Date(dateString);
+        
+        // Verificar si la fecha es válida
+        if (isNaN(date.getTime())) {
+            console.error('Fecha inválida:', dateString);
+            return 'Fecha inválida';
+        }
         
         // Formatear a dd/mm/aaaa
-        const day = date.getUTCDate().toString().padStart(2, '0');
-        const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-        const year = date.getUTCFullYear();
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
         
         return `${day}/${month}/${year}`;
     } catch (error) {
@@ -60,17 +65,47 @@ function formatDate(dateString) {
         return 'Fecha inválida';
     }
 }
-function formatDateAccounts(dateString) {
-    if (!dateString) return 'Fecha no disponible';
+
+function formatDateForPostgres(dateString) {
+    if (!dateString) return new Date().toISOString().split('T')[0];
     
-    try {
-        // Dividir la fecha ISO directamente (YYYY-MM-DD)
-        const [year, month, day] = dateString.split('T')[0].split('-');
-        return `${day}/${month}/${year}`;
-    } catch (error) {
-        console.error('Error formateando fecha de cuenta:', error, dateString);
-        return 'Fecha inválida';
+    // Si ya está en formato YYYY-MM-DD, devolver tal cual
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        return dateString;
     }
+    
+    // Convertir de formato DD/MM/YYYY a YYYY-MM-DD
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+        const parts = dateString.split('/');
+        return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+    }
+    
+    // Convertir de formato MM/DD/YYYY a YYYY-MM-DD
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
+        const parts = dateString.split('/');
+        const year = parts[2];
+        const month = parts[0].padStart(2, '0');
+        const day = parts[1].padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+    // Para otros formatos, usar el objeto Date
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+        // Si no es una fecha válida, usar la fecha actual
+        return new Date().toISOString().split('T')[0];
+    }
+    
+    // Formatear a YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+}
+
+function formatDateAccounts(dateString) {
+    return formatDate(dateString); // Usar la misma función
 }
 
 // Validaciones

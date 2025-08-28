@@ -1,4 +1,4 @@
-// dashboard.js - Versión mejorada con transferencias y top 3 cuentas
+// dashboard.js - Versión modificada sin transferencias internas
 console.log('Dashboard cargado');
 
 // Variables globales
@@ -12,12 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
         redirectToLogin();
         return;
     }
-    
-    // Configurar menú hamburguesa
-    setupHamburgerMenu();
-    
-    // Configurar logout
-    setupLogout();
     
     // Cargar datos del dashboard
     loadDashboardData();
@@ -42,7 +36,7 @@ function setupHamburgerMenu() {
     
     hamburgerMenu.addEventListener('click', function(e) {
         e.stopPropagation();
-        dropdownMenu.classList.toggle('.show');
+        dropdownMenu.classList.toggle('show');
     });
     
     // Cerrar menú al hacer clic fuera
@@ -99,12 +93,12 @@ async function loadDashboardData() {
         // 2. Actualizar UI con datos del usuario
         updateUserInfo(userData);
         
-        // 3. Cargar cuentas del usuario y mostrar solo las 3 con mayor saldo
+        // 3. Cargar cuentas del usuario y mostrar solo las 4 con mayor saldo
         const accounts = await accountService.getAccountsByUserId(userData.id);
         updateAccounts(accounts);
         
-        // 4. Cargar transacciones recientes (incluyendo transferencias)
-        const transactions = await getRecentTransactionsWithTransfers(userData.id, 5);
+        // 4. Cargar solo las últimas 5 transacciones (sin transferencias)
+        const transactions = await transactionService.getRecentTransactions(userData.id, 5);
         updateRecentTransactions(transactions);
         
         // 5. Calcular y mostrar resumen financiero
@@ -117,49 +111,6 @@ async function loadDashboardData() {
         console.error('Error cargando datos del dashboard:', error);
         showNotification('Error al cargar datos del dashboard', 'error');
         showLoadingState(false);
-    }
-}
-
-// Obtener transacciones recientes incluyendo transferencias internas
-async function getRecentTransactionsWithTransfers(userId, limit = 5) {
-    try {
-        // Obtener transacciones normales
-        const transactions = await transactionService.getRecentTransactions(userId, 20); // Obtener más para combinar
-        
-        // Obtener transferencias internas
-        const internalTransfers = await internalTransferService.getAllInternalTransfers() || [];
-        
-        // Formatear transferencias para que coincidan con el formato de transacciones
-        const formattedTransfers = internalTransfers.map(transfer => ({
-            id: transfer.id,
-            type: 'TRANSFER',
-            amount: transfer.amount,
-            description: `Transferencia: ${transfer.originAccountName || 'Cuenta origen'} → ${transfer.destinationAccountName || 'Cuenta destino'}`,
-            date: transfer.date,
-            categoryName: 'Transferencia Interna',
-            isTransfer: true,
-            // Para ordenamiento por fecha
-            timestamp: new Date(transfer.date).getTime()
-        }));
-        
-        // Formatear transacciones normales para ordenamiento
-        const formattedTransactions = transactions.map(transaction => ({
-            ...transaction,
-            // Para ordenamiento por fecha
-            timestamp: transaction.date ? new Date(transaction.date).getTime() : 0,
-            isTransfer: false
-        }));
-        
-        // Combinar y ordenar por fecha (más recientes primero)
-        const allTransactions = [...formattedTransactions, ...formattedTransfers]
-            .sort((a, b) => b.timestamp - a.timestamp)
-            .slice(0, limit);
-        
-        return allTransactions;
-    } catch (error) {
-        console.error('Error obteniendo transacciones con transferencias:', error);
-        // Si hay error, devolver solo transacciones normales
-        return await transactionService.getRecentTransactions(userId, limit) || [];
     }
 }
 
@@ -194,7 +145,7 @@ function updateGreeting() {
     }
 }
 
-// Actualizar lista de cuentas (mostrar solo las 3 con mayor saldo)
+// Actualizar lista de cuentas (mostrar solo las 4 con mayor saldo)
 function updateAccounts(accounts) {
     const accountsList = document.querySelector('.accounts-list');
     if (!accountsList) return;
@@ -210,7 +161,7 @@ function updateAccounts(accounts) {
         return;
     }
     
-    // Ordenar cuentas por saldo (mayor a menor) y tomar las primeras 3
+    // Ordenar cuentas por saldo (mayor a menor) y tomar las primeras 4
     const topAccounts = [...accounts]
         .sort((a, b) => (b.currentBalance || 0) - (a.currentBalance || 0))
         .slice(0, 4);
@@ -250,8 +201,8 @@ function updateAccounts(accounts) {
         `;
     });
     
-    // Si hay más de 3 cuentas, mostrar mensaje
-    if (accounts.length > 3) {
+    // Si hay más de 4 cuentas, mostrar mensaje
+    if (accounts.length > 4) {
         accountsHTML += `
             <div class="more-accounts">
                 <p>Y ${accounts.length - 4} cuenta(s) más...</p>
@@ -263,7 +214,7 @@ function updateAccounts(accounts) {
     accountsList.innerHTML = accountsHTML;
 }
 
-// Actualizar transacciones recientes (incluyendo transferencias)
+// Actualizar transacciones recientes (solo las últimas 5 transacciones normales)
 function updateRecentTransactions(transactions) {
     const transactionsList = document.getElementById('transactions-list');
     if (!transactionsList) return;
@@ -279,28 +230,25 @@ function updateRecentTransactions(transactions) {
         return;
     }
     
+    // Limitar a solo las últimas 5 transacciones
+    const recentTransactions = [...transactions]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5);
+    
     let transactionsHTML = '';
     
-    transactions.forEach(transaction => {
-        // Determinar si es ingreso, gasto o transferencia
-        let typeClass, iconClass, amountClass, amountPrefix;
+    recentTransactions.forEach(transaction => {
+        // Determinar si es ingreso o gasto
+        const isIncome = transaction.type && (
+            transaction.type.toLowerCase() === 'income' || 
+            transaction.type.toLowerCase() === 'ingreso' ||
+            transaction.transactionType === 'INCOME'
+        );
         
-        if (transaction.type === 'TRANSFER' || transaction.isTransfer) {
-            typeClass = 'transfer';
-            iconClass = 'fa-exchange-alt transfer';
-            amountClass = 'transfer';
-            amountPrefix = '⇄ ';
-        } else {
-            const isIncome = transaction.type && (
-                transaction.type.toLowerCase() === 'income' || 
-                transaction.type.toLowerCase() === 'ingreso' ||
-                transaction.transactionType === 'INCOME'
-            );
-            typeClass = isIncome ? 'income' : 'expense';
-            iconClass = isIncome ? 'fa-arrow-down income' : 'fa-arrow-up expense';
-            amountClass = isIncome ? 'positive' : 'negative';
-            amountPrefix = isIncome ? '+' : '-';
-        }
+        const typeClass = isIncome ? 'income' : 'expense';
+        const iconClass = isIncome ? 'fa-arrow-down income' : 'fa-arrow-up expense';
+        const amountClass = isIncome ? 'positive' : 'negative';
+        const amountPrefix = isIncome ? '+' : '-';
         
         // Formatear fecha
         const transactionDate = transaction.date ? formatDate(transaction.date) : 'Fecha no disponible';
@@ -360,19 +308,17 @@ async function updateFinancialSummary(accounts, transactions) {
             
             // Verificar si la transacción es del mes actual
             if (transactionDate >= startOfMonth && transactionDate <= endOfMonth) {
-                // Determinar si es ingreso o gasto (excluir transferencias)
-                if (!transaction.isTransfer && transaction.type !== 'TRANSFER') {
-                    const isIncome = transaction.type && (
-                        transaction.type.toLowerCase() === 'income' || 
-                        transaction.type.toLowerCase() === 'ingreso' ||
-                        transaction.transactionType === 'INCOME'
-                    );
-                    
-                    if (isIncome) {
-                        monthlyIncome += transaction.amount || 0;
-                    } else {
-                        monthlyExpenses += transaction.amount || 0;
-                    }
+                // Determinar si es ingreso o gasto
+                const isIncome = transaction.type && (
+                    transaction.type.toLowerCase() === 'income' || 
+                    transaction.type.toLowerCase() === 'ingreso' ||
+                    transaction.transactionType === 'INCOME'
+                );
+                
+                if (isIncome) {
+                    monthlyIncome += transaction.amount || 0;
+                } else {
+                    monthlyExpenses += transaction.amount || 0;
                 }
             }
         });
