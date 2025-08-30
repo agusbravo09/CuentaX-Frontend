@@ -3,7 +3,6 @@ console.log('API Client cargado');
 
 const API_BASE_URL = 'https://finanzapp-backend-a1rz.onrender.com';
 
-// Función para obtener el header de autenticación
 function getAuthHeader() {
     const authToken = getLocalStorage('authToken');
     if (!authToken) {
@@ -13,7 +12,6 @@ function getAuthHeader() {
     return 'Basic ' + authToken;
 }
 
-// Función genérica para peticiones API
 async function fetchAPI(endpoint, options = {}) {
     const url = API_BASE_URL + endpoint;
     const authHeader = getAuthHeader();
@@ -40,10 +38,7 @@ async function fetchAPI(endpoint, options = {}) {
         const response = await fetch(url, config);
 
         if (response.status === 401) {
-            // Token inválido o expirado
-            removeLocalStorage('authToken');
-            removeLocalStorage('userEmail');
-            removeLocalStorage('currentUser');
+            ['authToken', 'userEmail', 'currentUser'].forEach(key => removeLocalStorage(key));
             redirectToLogin();
             return null;
         }
@@ -53,9 +48,7 @@ async function fetchAPI(endpoint, options = {}) {
             return null;
         }
 
-        if (response.status === 204) {
-            return null;
-        }
+        if (response.status === 204) return null;
 
         return await response.json();
     } catch (error) {
@@ -65,7 +58,6 @@ async function fetchAPI(endpoint, options = {}) {
     }
 }
 
-// Servicios para usuarios
 const userService = {
     getUserByEmail: (email) => fetchAPI('/api/v1/users/email/' + encodeURIComponent(email)),
     getUserById: (id) => fetchAPI('/api/v1/users/' + id),
@@ -75,7 +67,6 @@ const userService = {
     })
 };
 
-// Servicios para cuentas (completos)
 const accountService = {
     getAccountsByUserId: (userId) => fetchAPI('/api/v1/accounts/user/' + userId),
     getAccountById: (id) => fetchAPI('/api/v1/accounts/' + id),
@@ -93,7 +84,6 @@ const accountService = {
     })
 };
 
-// Servicios para transacciones
 const transactionService = {
     getTransactionsByUserId: (userId) => fetchAPI('/api/v1/transactions/user/' + userId),
     getRecentTransactions: (userId, limit = 5) =>
@@ -111,13 +101,11 @@ const transactionService = {
     }
 };
 
-// Servicios para categorías
 const categoryService = {
     getCategories: () => fetchAPI('/api/v1/categories/all'),
     getCategoryById: (id) => fetchAPI('/api/v1/categories/' + id)
 };
 
-// Servicios para transferencias internas
 const internalTransferService = {
     createInternalTransfer: async (transferData) => {
         return await fetchAPI('/api/v1/internal-transfers', {

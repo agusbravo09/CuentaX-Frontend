@@ -28,13 +28,13 @@ body {
 
 .dashboard-container {
     padding: 1rem;
-    width: 100%; /* Forzamos ancho completo */
-    max-width: 100%; /* Eliminamos cualquier límite máximo */
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
     padding-bottom: 80px;
     padding-top: 0;
     margin-top: 0;
-    box-sizing: border-box; /* Aseguramos que el padding no afecte el ancho */
+    box-sizing: border-box;
 }
 
 .dashboard-header {
@@ -42,7 +42,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    text-align: center; /* Centramos el texto de bienvenida */
+    text-align: center;
 }
 
 .greeting h2 {
@@ -62,7 +62,7 @@ body {
     padding: 1.5rem;
     border-radius: 16px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Ocupa todo el ancho disponible */
+    width: 100%;
 }
 
 .total-balance h3 {
@@ -204,15 +204,6 @@ body {
 
 .amount.expense {
     color: var(--error);
-}
-
-.mini-chart {
-    height: 60px; /* Aumentamos la altura de los gráficos */
-    background-color: var(--gray-100);
-    border-radius: 8px;
-    margin-top: 0.5rem;
-    position: relative;
-    overflow: hidden;
 }
 
 .due-list {
@@ -750,8 +741,8 @@ body.loading::before {
         padding: 2rem;
         padding-bottom: 2rem;
         padding-top: 6rem;
-        max-width: none; /* Eliminamos cualquier max-width */
-        width: 75%; /* Ahora usamos width en lugar de max-width */
+        max-width: none;
+        width: 75%;
         margin-top: 0;
     }
     
@@ -774,10 +765,7 @@ body.loading::before {
     .card {
         padding: 1.75rem; /* Más padding para las cards */
     }
-    
-    .mini-chart {
-        height: 80px; /* Gráficos más altos en desktop */
-    }
+
     
     .desktop-layout {
         flex-direction: row;

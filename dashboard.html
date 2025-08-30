@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Dashboard - FinanzApp</title>
     <link rel="stylesheet" href="css/components/header.css">
     <link rel="stylesheet" href="css/components/forms.css">
@@ -15,46 +15,21 @@
 </head>
 
 <body>
-    <!-- Navbar Superior -->
     <nav class="navbar">
         <div class="navbar-brand">
             <h1>Finanz<span>App</span></h1>
         </div>
-        <div class="navbar-menu">
-            <a href="dashboard.html" class="navbar-item active">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="accounts.html" class="navbar-item">
-                <i class="fas fa-wallet"></i>
-                <span>Cuentas</span>
-            </a>
-            <a href="transactions.html" class="navbar-item">
-                <i class="fas fa-exchange-alt"></i>
-                <span>Transacciones</span>
-            </a>
-            <!-- Eliminamos el item de perfil y agregamos el menú hamburguesa -->
-            <div class="navbar-hamburger" id="hamburger-menu">
-                <i class="fas fa-bars"></i>
-            </div>
+        <div class="navbar-menu"><a href="dashboard.html" class="navbar-item active"><i
+                    class="fas fa-home"></i><span>Dashboard</span></a><a href="accounts.html" class="navbar-item"><i
+                    class="fas fa-wallet"></i><span>Cuentas</span></a><a href="transactions.html" class="navbar-item"><i
+                    class="fas fa-exchange-alt"></i><span>Transacciones</span></a>
+            <div class="navbar-hamburger" id="hamburger-menu"><i class="fas fa-bars"></i></div>
         </div>
     </nav>
-
-    <!-- Menú desplegable -->
-    <div class="dropdown-menu" id="dropdown-menu">
-        <a href="profile.html" class="dropdown-item">
-            <i class="fas fa-user"></i>
-            <span>Perfil</span>
-        </a>
-        <button class="dropdown-item" id="logout-btn">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Cerrar sesión</span>
-        </button>
-    </div>
-
-    <!-- Contenido Principal -->
+    <div class="dropdown-menu" id="dropdown-menu"><a href="profile.html" class="dropdown-item"><i
+                class="fas fa-user"></i><span>Perfil</span></a><button class="dropdown-item" id="logout-btn"><i
+                class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></button></div>
     <main class="dashboard-container">
-        <!-- Header con Saludo y Balance -->
         <header class="dashboard-header">
             <div class="greeting">
                 <h2 id="greeting-text">Buenos días, <span id="user-name">Usuario</span> ¿Cómo has estado?</h2>
@@ -64,67 +39,48 @@
                 <p id="total-balance-amount">$0.00</p>
             </div>
         </header>
-
-        <!-- Tarjetas Resumen -->
         <section class="summary-cards">
-            <!-- Tarjeta de Ingresos -->
             <div class="card centered-card">
                 <div class="card-header">
-                    <h4>Ingresos del Mes</h4>
-                    <i class="fas fa-arrow-down"></i>
+                    <h4>Ingresos del Mes</h4><i class="fas fa-arrow-down"></i>
                 </div>
                 <div class="card-body">
                     <p class="amount income">$0.00</p>
                 </div>
             </div>
-
-            <!-- Tarjeta de Gastos -->
             <div class="card centered-card">
                 <div class="card-header">
-                    <h4>Gastos del Mes</h4>
-                    <i class="fas fa-arrow-up"></i>
+                    <h4>Gastos del Mes</h4><i class="fas fa-arrow-up"></i>
                 </div>
                 <div class="card-body">
                     <p class="amount expense">$0.00</p>
                 </div>
             </div>
         </section>
-
-        <!-- Sección combinada para escritorio -->
         <section class="desktop-layout">
-            <!-- Últimas Transacciones -->
             <div class="transactions-section">
                 <div class="section-header">
-                    <h3>Últimas Transacciones</h3>
-                    <a href="transactions.html" class="view-all">Ver todas</a>
+                    <h3>Últimas Transacciones</h3><a href="transactions.html" class="view-all">Ver todas</a>
                 </div>
                 <div class="transactions-list" id="transactions-list">
-                    <div class="no-data">
-                        <i class="fas fa-exchange-alt"></i>
-                        <p>No hay transacciones recientes</p>
-                        <a href="transactions.html" class="btn-link">Realizar transacción</a>
+                    <div class="no-data"><i class="fas fa-exchange-alt"></i>
+                        <p>No hay transacciones recientes</p><a href="transactions.html" class="btn-link">Realizar
+                            transacción</a>
                     </div>
                 </div>
             </div>
-
-            <!-- Resumen de Cuentas -->
             <div class="accounts-section">
                 <div class="section-header">
-                    <h3>Mis Cuentas</h3>
-                    <a href="accounts.html" class="view-all">Ver todas</a>
+                    <h3>Mis Cuentas</h3><a href="accounts.html" class="view-all">Ver todas</a>
                 </div>
                 <div class="accounts-list">
-                    <div class="no-data">
-                        <i class="fas fa-wallet"></i>
-                        <p>No tienes cuentas registradas</p>
-                        <a href="accounts.html" class="btn-link">Agregar cuenta</a>
+                    <div class="no-data"><i class="fas fa-wallet"></i>
+                        <p>No tienes cuentas registradas</p><a href="accounts.html" class="btn-link">Agregar cuenta</a>
                     </div>
                 </div>
             </div>
         </section>
     </main>
-
-    <!-- Scripts -->
     <script src="./js/components/burguer.js"></script>
     <script src="./js/services/utils.js"></script>
     <script src="./js/services/api/api-client.js"></script>

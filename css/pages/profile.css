@@ -1,4 +1,3 @@
-/* profile.css - Estilos para la sección de perfil */
 .profile-container {
     padding: 1rem;
     width: 100%;
@@ -217,7 +216,7 @@
 }
 
 .input-with-icon .password-toggle {
-    right: 35px; /* Ajustar para que no se superponga con el icono */
+    right: 35px;
 }
 
 /* Media queries para tablets y escritorio */

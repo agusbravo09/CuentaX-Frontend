@@ -3,15 +3,12 @@ console.log('Auth API cargado');
 
 const API_BASE_URL = 'https://finanzapp-backend-a1rz.onrender.com';
 
-// Función para login
 async function login(email, password) {
     console.log('Intentando login con:', email);
     
     try {
-        // Codificar credenciales en Base64
         const credentials = btoa(`${email}:${password}`);
         
-        // Verificar credenciales con el endpoint de usuarios
         const response = await fetch(`${API_BASE_URL}/api/v1/users/all`, {
             method: 'GET',
             headers: {
@@ -21,7 +18,6 @@ async function login(email, password) {
         });
 
         if (response.ok) {
-            // Si las credenciales son válidas, obtener datos del usuario
             const userResponse = await fetch(`${API_BASE_URL}/api/v1/users/email/${encodeURIComponent(email)}`, {
                 method: 'GET',
                 headers: {
@@ -38,7 +34,6 @@ async function login(email, password) {
                     authToken: credentials
                 };
             } else {
-                // Si no se pueden obtener datos completos, usar datos mínimos
                 return { 
                     success: true, 
                     data: { email: email, name: email.split('@')[0] },
@@ -65,7 +60,6 @@ async function login(email, password) {
     }
 }
 
-// Función para registro
 async function register(userData) {
     console.log('Intentando registrar usuario:', userData);
     

@@ -1,29 +1,22 @@
 // accounts.js - Gestión de cuentas
 console.log('Accounts cargado');
 
-// Variables globales
 let accountsData = [];
 let currentAccountId = null;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM cargado - Inicializando gestión de cuentas');
     
-    // Verificar autenticación
     if (!isUserAuthenticated()) {
         redirectToLogin();
         return;
     }
     
-    // Configurar eventos de los modales
     setupModalEvents();
-    
-    // Cargar datos de cuentas
     loadAccountsData();
 });
 
-// Configurar eventos de los modales
 function setupModalEvents() {
-    // Botón para abrir modal de agregar cuenta
     const addAccountBtn = document.getElementById('add-account-btn');
     const firstAccountBtn = document.getElementById('first-account-btn');
     const accountModal = document.getElementById('account-modal');
@@ -32,98 +25,56 @@ function setupModalEvents() {
     const closeModalButtons = document.querySelectorAll('.close-modal');
     const cancelDeleteBtn = document.getElementById('cancel-delete');
     const confirmDeleteBtn = document.getElementById('confirm-delete');
+    const balanceInput = document.getElementById('account-balance');
     
-    // Abrir modal para agregar cuenta
-    if (addAccountBtn) {
-        addAccountBtn.addEventListener('click', function() {
-            openAccountModal();
-        });
-    }
+    const openModalHandler = () => openAccountModal();
+    if (addAccountBtn) addAccountBtn.addEventListener('click', openModalHandler);
+    if (firstAccountBtn) firstAccountBtn.addEventListener('click', openModalHandler);
     
-    // Abrir modal desde el botón de "primera cuenta"
-    if (firstAccountBtn) {
-        firstAccountBtn.addEventListener('click', function() {
-            openAccountModal();
-        });
-    }
-    
-    // Cerrar modales al hacer clic en la X
     closeModalButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            closeModals();
-        });
+        button.addEventListener('click', closeModals);
     });
     
-    // Cerrar modales al hacer clic fuera del contenido
     [accountModal, deleteModal].forEach(modal => {
         if (modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeModals();
-                }
+            modal.addEventListener('click', e => {
+                if (e.target === modal) closeModals();
             });
         }
     });
     
-    // Enviar formulario de cuenta
     if (accountForm) {
-        accountForm.addEventListener('submit', function(e) {
+        accountForm.addEventListener('submit', e => {
             e.preventDefault();
             saveAccount();
         });
     }
     
-    // Cancelar eliminación
-    if (cancelDeleteBtn) {
-        cancelDeleteBtn.addEventListener('click', function() {
-            closeModals();
-        });
-    }
+    if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', closeModals);
+    if (confirmDeleteBtn) confirmDeleteBtn.addEventListener('click', () => deleteAccount(currentAccountId));
     
-    // Confirmar eliminación
-    if (confirmDeleteBtn) {
-        confirmDeleteBtn.addEventListener('click', function() {
-            deleteAccount(currentAccountId);
-        });
-    }
-    
-    // Cerrar con tecla Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeModals();
-        }
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeModals();
     });
     
-    // Validar saldo en tiempo real
-    const balanceInput = document.getElementById('account-balance');
     if (balanceInput) {
-        balanceInput.addEventListener('input', function() {
-            validateBalanceInput(this);
-        });
+        balanceInput.addEventListener('input', () => validateBalanceInput(balanceInput));
     }
 }
 
-// Validar que el saldo no sea negativo
 function validateBalanceInput(input) {
     const value = parseFloat(input.value);
-    if (isNaN(value) || value < 0) {
-        input.setCustomValidity('El balance no puede ser negativo');
-    } else {
-        input.setCustomValidity('');
-    }
+    input.setCustomValidity(isNaN(value) || value < 0 ? 'El balance no puede ser negativo' : '');
 }
 
-// Abrir modal para agregar/editar cuenta
 function openAccountModal(accountId = null) {
     const modal = document.getElementById('account-modal');
     const modalTitle = document.getElementById('modal-title');
     const accountForm = document.getElementById('account-form');
     
-    // Desactivar autocompletar
     accountForm.setAttribute('autocomplete', 'off');
     
     if (accountId) {
-        // Modo edición - cargar datos de la cuenta
         modalTitle.textContent = 'Editar Cuenta';
         const account = accountsData.find(acc => acc.id == accountId);
         
@@ -132,54 +83,32 @@ function openAccountModal(accountId = null) {
             document.getElementById('account-name').value = account.name || '';
             document.getElementById('account-balance').value = account.currentBalance || 0;
             
-            // Mapear el tipo de cuenta del backend al frontend
-            let frontendType;
-            switch(account.type) {
-                case 'BANK':
-                    frontendType = 'bank';
-                    break;
-                case 'VIRTUAL_WALLET':
-                    frontendType = 'virtual_wallet';
-                    break;
-                case 'CASH':
-                    frontendType = 'cash';
-                    break;
-                default:
-                    frontendType = account.type.toLowerCase();
-            }
+            const typeMap = {
+                'BANK': 'bank',
+                'VIRTUAL_WALLET': 'virtual_wallet', 
+                'CASH': 'cash'
+            };
             
-            document.getElementById('account-type').value = frontendType;
-            
-            console.log('Cargando datos para edición:', {
-                id: account.id,
-                name: account.name,
-                balance: account.currentBalance,
-                type: account.type,
-                frontendType: frontendType
-            });
+            document.getElementById('account-type').value = typeMap[account.type] || account.type.toLowerCase();
         } else {
             console.error('No se encontró la cuenta con ID:', accountId);
             showNotification('Error al cargar los datos de la cuenta', 'error');
             return;
         }
     } else {
-        // Modo agregar - limpiar formulario
         modalTitle.textContent = 'Agregar Cuenta';
         accountForm.reset();
         document.getElementById('account-id').value = '';
     }
     
-    // Mostrar modal
     modal.classList.add('show');
     document.body.style.overflow = 'hidden';
     
-    // Enfocar el primer campo
     setTimeout(() => {
         document.getElementById('account-name').focus();
     }, 100);
 }
 
-// Abrir modal de confirmación para eliminar
 function openDeleteModal(accountId) {
     const modal = document.getElementById('delete-modal');
     const accountNameElement = document.getElementById('delete-account-name');
@@ -188,45 +117,31 @@ function openDeleteModal(accountId) {
     if (account) {
         accountNameElement.textContent = account.name || 'esta cuenta';
         currentAccountId = accountId;
-        
-        // Desactivar autocompletar
         modal.setAttribute('autocomplete', 'off');
-        
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
     }
 }
 
-// Cerrar todos los modales
 function closeModals() {
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        modal.classList.remove('show');
-    });
+    document.querySelectorAll('.modal').forEach(modal => modal.classList.remove('show'));
     document.body.style.overflow = 'auto';
     currentAccountId = null;
 }
 
-// Cargar datos de cuentas
 async function loadAccountsData() {
     console.log('Cargando datos de cuentas...');
     
     try {
-        // Obtener usuario actual
         const userData = getLocalStorage('currentUser');
-        if (!userData || !userData.id) {
+        if (!userData?.id) {
             showNotification('Error al cargar datos de usuario', 'error');
             return;
         }
         
-        // Mostrar loading state
         showLoadingState(true);
-        
-        // Obtener cuentas del usuario
         accountsData = await accountService.getAccountsByUserId(userData.id);
         updateAccountsList(accountsData);
-        
-        // Ocultar loading state
         showLoadingState(false);
         
     } catch (error) {
@@ -236,12 +151,11 @@ async function loadAccountsData() {
     }
 }
 
-// Actualizar lista de cuentas en la UI
 function updateAccountsList(accounts) {
     const accountsGrid = document.getElementById('accounts-grid');
     if (!accountsGrid) return;
     
-    if (!accounts || accounts.length === 0) {
+    if (!accounts?.length) {
         accountsGrid.innerHTML = `
             <div class="no-data">
                 <i class="fas fa-wallet"></i>
@@ -250,43 +164,28 @@ function updateAccountsList(accounts) {
             </div>
         `;
         
-        // Reconfigurar evento del botón
         const firstAccountBtn = document.getElementById('first-account-btn');
         if (firstAccountBtn) {
-            firstAccountBtn.addEventListener('click', function() {
-                openAccountModal();
-            });
+            firstAccountBtn.addEventListener('click', () => openAccountModal());
         }
-        
         return;
     }
     
-    let accountsHTML = '';
-    
-    accounts.forEach(account => {
-        // Determinar tipo de cuenta y colores
-        let typeText = 'Cuenta';
-        let typeClass = '';
+    const accountsHTML = accounts.map(account => {
+        const typeConfig = {
+            'BANK': { text: 'Cuenta Bancaria', class: 'bank', icon: 'fa-university' },
+            'VIRTUAL_WALLET': { text: 'Billetera Virtual', class: 'virtual_wallet', icon: 'fa-wallet' },
+            'CASH': { text: 'Efectivo', class: 'cash', icon: 'fa-money-bill-wave' }
+        };
         
-        if (account.type === 'BANK') {
-            typeText = 'Cuenta Bancaria';
-            typeClass = 'bank';
-        } else if (account.type === 'VIRTUAL_WALLET') {
-            typeText = 'Billetera Virtual';
-            typeClass = 'virtual_wallet';
-        } else if (account.type === 'CASH') {
-            typeText = 'Efectivo';
-            typeClass = 'cash';
-        }
-        
-        // Formatear fecha de creación
+        const config = typeConfig[account.type] || { text: 'Cuenta', class: '', icon: 'fa-wallet' };
         const createdDate = account.createdAt ? formatDateAccounts(account.createdAt) : 'Fecha no disponible';
         
-        accountsHTML += `
-            <div class="account-card ${typeClass}">
+        return `
+            <div class="account-card ${config.class}">
                 <div class="account-header">
-                    <div class="account-icon ${typeClass}">
-                        <i class="fas ${typeClass === 'bank' ? 'fa-university' : typeClass === 'virtual_wallet' ? 'fa-wallet' : 'fa-money-bill-wave'}"></i>
+                    <div class="account-icon ${config.class}">
+                        <i class="fas ${config.icon}"></i>
                     </div>
                     <div class="account-actions">
                         <button class="account-action-btn edit" data-id="${account.id}">
@@ -299,7 +198,7 @@ function updateAccountsList(accounts) {
                 </div>
                 <div class="account-info">
                     <h3 class="account-name">${account.name || 'Cuenta sin nombre'}</h3>
-                    <p class="account-type">${typeText}</p>
+                    <p class="account-type">${config.text}</p>
                 </div>
                 <div class="account-balance">
                     ${formatCurrency(account.currentBalance || 0)}
@@ -309,30 +208,19 @@ function updateAccountsList(accounts) {
                 </div>
             </div>
         `;
-    });
+    }).join('');
     
     accountsGrid.innerHTML = accountsHTML;
     
-    // Agregar eventos a los botones de editar y eliminar
-    const editButtons = document.querySelectorAll('.account-action-btn.edit');
-    const deleteButtons = document.querySelectorAll('.account-action-btn.delete');
-    
-    editButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const accountId = this.getAttribute('data-id');
-            openAccountModal(accountId);
-        });
+    document.querySelectorAll('.account-action-btn.edit').forEach(button => {
+        button.addEventListener('click', () => openAccountModal(button.getAttribute('data-id')));
     });
     
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const accountId = this.getAttribute('data-id');
-            openDeleteModal(accountId);
-        });
+    document.querySelectorAll('.account-action-btn.delete').forEach(button => {
+        button.addEventListener('click', () => openDeleteModal(button.getAttribute('data-id')));
     });
 }
 
-// Guardar cuenta (crear o actualizar)
 async function saveAccount() {
     const saveButton = document.getElementById('save-account-btn');
     const accountId = document.getElementById('account-id').value;
@@ -340,7 +228,6 @@ async function saveAccount() {
     const accountBalance = parseFloat(document.getElementById('account-balance').value);
     const accountType = document.getElementById('account-type').value;
     
-    // Validaciones básicas
     if (!accountName.trim()) {
         showNotification('El nombre de la cuenta es requerido', 'error');
         return;
@@ -357,35 +244,24 @@ async function saveAccount() {
     }
     
     try {
-        // Cambiar estado del botón a loading
         const originalText = saveButton.innerHTML;
         saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         saveButton.disabled = true;
         
-        // Obtener usuario actual
         const userData = getLocalStorage('currentUser');
-        if (!userData || !userData.id) {
+        if (!userData?.id) {
             showNotification('Error al identificar el usuario', 'error');
             return;
         }
         
-        // Mapear los valores del frontend a los que espera el backend
-        let backendAccountType;
-        switch(accountType) {
-            case 'bank':
-                backendAccountType = 'BANK';
-                break;
-            case 'virtual_wallet':
-                backendAccountType = 'VIRTUAL_WALLET';
-                break;
-            case 'cash':
-                backendAccountType = 'CASH';
-                break;
-            default:
-                backendAccountType = accountType.toUpperCase();
-        }
+        const typeMap = {
+            'bank': 'BANK',
+            'virtual_wallet': 'VIRTUAL_WALLET', 
+            'cash': 'CASH'
+        };
         
-        // FORMATO MÍNIMO - solo enviar lo esencial
+        const backendAccountType = typeMap[accountType] || accountType.toUpperCase();
+        
         const accountData = {
             name: accountName,
             currentBalance: accountBalance,
@@ -398,43 +274,31 @@ async function saveAccount() {
         let result;
         
         if (accountId) {
-            // Actualizar cuenta existente - NO enviar campos de fecha
             const updateData = {
                 name: accountName,
                 currentBalance: accountBalance,
                 type: backendAccountType
-                // No enviar userId en updates
             };
             
             result = await accountService.updateAccount(accountId, updateData);
-            if (result) {
-                showNotification('Cuenta actualizada correctamente', 'success');
-            }
+            if (result) showNotification('Cuenta actualizada correctamente', 'success');
         } else {
-            // Crear nueva cuenta
             result = await accountService.createAccount(accountData);
-            if (result) {
-                showNotification('Cuenta creada correctamente', 'success');
-            }
+            if (result) showNotification('Cuenta creada correctamente', 'success');
         }
         
-        // Cerrar modal y recargar datos
         closeModals();
         await loadAccountsData();
         
     } catch (error) {
         console.error('Error guardando cuenta:', error);
-        // Mostrar mensaje de error más específico
-        const errorMessage = error.message || 'Error al guardar la cuenta. Verifica la consola para más detalles.';
-        showNotification(errorMessage, 'error');
+        showNotification(error.message || 'Error al guardar la cuenta', 'error');
     } finally {
-        // Restaurar estado del botón
         saveButton.innerHTML = 'Guardar Cuenta';
         saveButton.disabled = false;
     }
 }
 
-// Eliminar cuenta
 async function deleteAccount(accountId) {
     try {
         const confirmButton = document.getElementById('confirm-delete');
@@ -442,9 +306,7 @@ async function deleteAccount(accountId) {
         confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
         confirmButton.disabled = true;
         
-        await accountService.deleteAccount(accountId); // si falla, lanza excepción
-        
-        // Si llega acá, significa que fue exitoso
+        await accountService.deleteAccount(accountId);
         showNotification('Cuenta eliminada correctamente', 'success');
         closeModals();
         await loadAccountsData();
@@ -459,7 +321,6 @@ async function deleteAccount(accountId) {
     }
 }
 
-// Mostrar/ocultar estado de carga
 function showLoadingState(show) {
     const accountsGrid = document.getElementById('accounts-grid');
     if (!accountsGrid) return;

@@ -1,9 +1,8 @@
-/* Utility Classes */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
 }
 
 body {
@@ -12,7 +11,7 @@ body {
     justify-content: center;
     min-height: 100vh;
     color: #334155;
-    padding: 1rem;
+    padding: 1rem
 }
 
 .btn {
@@ -23,135 +22,154 @@ body {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all .3s;
     text-align: center;
-    text-decoration: none;
+    text-decoration: none
 }
 
 .btn-primary {
     background-color: #297c79;
-    color: white;
+    color: #fff
 }
 
 .btn-primary:hover {
-    background-color: #225f5c;
+    background-color: #225f5c
 }
 
 .btn-secondary {
     background-color: #2563EB;
-    color: white;
+    color: #fff
 }
 
 .btn-secondary:hover {
-    background-color: #1d4ed8;
+    background-color: #1d4ed8
 }
 
 .btn-accent {
     background-color: #F59E0B;
-    color: white;
+    color: #fff
 }
 
 .btn-accent:hover {
-    background-color: #D97706;
+    background-color: #D97706
 }
 
 .btn-full {
-    width: 100%;
+    width: 100%
 }
 
 .text-center {
-    text-align: center;
+    text-align: center
 }
 
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mt-3 { margin-top: 1.5rem; }
-.mt-4 { margin-top: 2rem; }
+.mt-1 {
+    margin-top: .5rem
+}
 
-.mb-1 { margin-bottom: 0.5rem; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 1.5rem; }
-.mb-4 { margin-bottom: 2rem; }
+.mt-2 {
+    margin-top: 1rem
+}
+
+.mt-3 {
+    margin-top: 1.5rem
+}
+
+.mt-4 {
+    margin-top: 2rem
+}
+
+.mb-1 {
+    margin-bottom: .5rem
+}
+
+.mb-2 {
+    margin-bottom: 1rem
+}
+
+.mb-3 {
+    margin-bottom: 1.5rem
+}
+
+.mb-4 {
+    margin-bottom: 2rem
+}
 
 .hidden {
-    display: none;
+    display: none
 }
 
-/* Notifications */
 .notification {
     position: fixed;
     top: 20px;
     right: 20px;
     padding: 15px 20px;
     border-radius: 5px;
-    color: white;
+    color: #fff;
     z-index: 10000;
     opacity: 0;
     transform: translateX(100%);
-    transition: all 0.3s ease;
+    transition: all .3s ease;
     max-width: 350px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
     display: flex;
-    align-items: center;
+    align-items: center
 }
 
 .notification.show {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0)
 }
 
 .notification.success {
     background-color: #10B981;
-    border-left: 4px solid #059669;
+    border-left: 4px solid #059669
 }
 
 .notification.error {
     background-color: #EF4444;
-    border-left: 4px solid #DC2626;
+    border-left: 4px solid #DC2626
 }
 
 .notification.warning {
     background-color: #F59E0B;
-    border-left: 4px solid #D97706;
+    border-left: 4px solid #D97706
 }
 
 .notification.info {
     background-color: #3B82F6;
-    border-left: 4px solid #2563EB;
+    border-left: 4px solid #2563EB
 }
 
 .notification-content {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 10px
 }
 
-/* Spinner button */
 .btn .fa-spinner {
-    margin-right: 8px;
+    margin-right: 8px
 }
 
-/* Responsive para utilidades */
-@media (max-width: 576px) {
+@media (max-width:576px) {
     body {
-        padding: 0.5rem;
+        padding: .5rem;
         align-items: flex-start;
-        padding-top: 1rem;
+        padding-top: 1rem
     }
-    
+
     .btn {
         padding: 10px 20px;
-        font-size: 15px;
+        font-size: 15px
     }
 
     .notification {
         right: 10px;
         left: 10px;
         max-width: none;
-        transform: translateY(-100%);
+        transform: translateY(-100%)
     }
 
     .notification.show {
-        transform: translateY(0);
+        transform: translateY(0)
     }
 }

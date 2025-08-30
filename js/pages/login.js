@@ -1,37 +1,30 @@
 // login.js - Lógica de la página de login
 console.log('Login cargado');
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM listo - inicializando login');
     
-    // Verificar si ya está autenticado
     if (getLocalStorage('authToken')) {
         console.log('Usuario ya autenticado, redirigiendo...');
         redirectToDashboard();
         return;
     }
-    // Configurar medidor de fortaleza de contraseña
-    setupPasswordStrengthMeter();
     
-    // Configurar event listeners
+    setupPasswordStrengthMeter();
     setupEventListeners();
 });
 
 function setupEventListeners() {
-    // Formulario de login
     const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
-    }
-    
-    // Formulario de registro
     const signupForm = document.getElementById('signupForm');
-    if (signupForm) {
-        signupForm.addEventListener('submit', handleRegister);
-    }
-    
-    // Botones de mostrar/ocultar contraseña
     const toggleButtons = document.querySelectorAll('.toggle-password');
+    const signupLink = document.getElementById('signupLink');
+    const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+    const closeButtons = document.querySelectorAll('.close-modal');
+    
+    if (loginForm) loginForm.addEventListener('submit', handleLogin);
+    if (signupForm) signupForm.addEventListener('submit', handleRegister);
+    
     toggleButtons.forEach(button => {
         button.addEventListener('click', function() {
             const input = this.parentElement.querySelector('input');
@@ -47,29 +40,23 @@ function setupEventListeners() {
         });
     });
     
-    // Enlaces para abrir modales
-    const signupLink = document.getElementById('signupLink');
     if (signupLink) {
-        signupLink.addEventListener('click', function(e) {
+        signupLink.addEventListener('click', e => {
             e.preventDefault();
             openModal('signupModal');
         });
     }
     
-    const forgotPasswordLink = document.getElementById('forgotPasswordLink');
     if (forgotPasswordLink) {
-        forgotPasswordLink.addEventListener('click', function(e) {
+        forgotPasswordLink.addEventListener('click', e => {
             e.preventDefault();
             openModal('forgotPasswordModal');
         });
     }
     
-    // Botones de cerrar modales
-    const closeButtons = document.querySelectorAll('.close-modal');
     closeButtons.forEach(button => {
         button.addEventListener('click', function() {
-            const modal = this.closest('.modal');
-            closeModal(modal.id);
+            closeModal(this.closest('.modal').id);
         });
     });
 }
@@ -81,7 +68,6 @@ async function handleLogin(e) {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     
-    // Validaciones básicas
     if (!email || !password) {
         showNotification('Por favor, completa todos los campos', 'error');
         return;
@@ -92,21 +78,17 @@ async function handleLogin(e) {
         return;
     }
     
-    // Mostrar loading
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
     submitBtn.disabled = true;
     
-    // Intentar login
     const result = await login(email, password);
     
-    // Restaurar botón
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
     
     if (result.success) {
-        // Guardar datos de sesión
         setLocalStorage('authToken', result.authToken);
         setLocalStorage('userEmail', email);
         setLocalStorage('currentUser', result.data);
@@ -114,9 +96,7 @@ async function handleLogin(e) {
         console.log('Login exitoso, redirigiendo...');
         showNotification('¡Login exitoso! Redirigiendo...', 'success');
         
-        setTimeout(() => {
-            redirectToDashboard();
-        }, 1000);
+        setTimeout(redirectToDashboard, 1000);
     } else {
         showNotification(result.error, 'error');
     }
@@ -131,7 +111,6 @@ async function handleRegister(e) {
     const password = document.getElementById('signupPassword').value;
     const confirmPassword = document.getElementById('signupConfirmPassword').value;
     
-    // Validaciones
     if (!name || !email || !password || !confirmPassword) {
         showNotification('Por favor, completa todos los campos', 'error');
         return;
@@ -152,17 +131,14 @@ async function handleRegister(e) {
         return;
     }
     
-    // Mostrar loading
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
     submitBtn.disabled = true;
     
-    // Intentar registro
     const userData = { name, email, password };
     const result = await register(userData);
     
-    // Restaurar botón
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
     
@@ -175,7 +151,6 @@ async function handleRegister(e) {
     }
 }
 
-// Funciones para modales (simplificadas)
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
@@ -202,13 +177,9 @@ function updatePasswordStrength() {
     if (strengthBar && strengthText) {
         strengthBar.style.width = strength + '%';
         
-        if (strength < 50) {
-            strengthBar.style.backgroundColor = '#EF4444';
-        } else if (strength < 75) {
-            strengthBar.style.backgroundColor = '#F59E0B';
-        } else {
-            strengthBar.style.backgroundColor = '#10B981';
-        }
+        if (strength < 50) strengthBar.style.backgroundColor = '#EF4444';
+        else if (strength < 75) strengthBar.style.backgroundColor = '#F59E0B';
+        else strengthBar.style.backgroundColor = '#10B981';
         
         strengthText.textContent = feedback;
     }
@@ -216,7 +187,5 @@ function updatePasswordStrength() {
 
 function setupPasswordStrengthMeter() {
     const passwordInput = document.getElementById('signupPassword');
-    if (passwordInput) {
-        passwordInput.addEventListener('input', updatePasswordStrength);
-    }
+    if (passwordInput) passwordInput.addEventListener('input', updatePasswordStrength);
 }

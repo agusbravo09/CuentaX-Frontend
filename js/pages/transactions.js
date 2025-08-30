@@ -1,36 +1,30 @@
 // transactions.js - Gestión de transacciones
 console.log('Transactions cargado');
 
-// Variables globales
 let transactionsData = [];
-let internalTransfersData = []; // Nueva variable para transferencias internas
+let internalTransfersData = [];
 let accountsData = [];
 let categoriesData = [];
 let paymentMethodsData = [];
 let currentTransactionId = null;
-let currentIsTransfer = false; // Nueva variable para saber si es transferencia
+let currentIsTransfer = false;
 let currentPage = 1;
 const transactionsPerPage = 10;
 let isLoading = false;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM cargado - Inicializando gestión de transacciones');
     
-    // Verificar autenticación
     if (!isUserAuthenticated()) {
         redirectToLogin();
         return;
     }
-    // Configurar eventos de los modales
-    setupModalEvents();
     
-    // Cargar datos iniciales
+    setupModalEvents();
     loadInitialData();
 });
 
-// Configurar eventos de los modales
 function setupModalEvents() {
-    // Botones para abrir modales
     const addTransactionBtn = document.getElementById('add-transaction-btn');
     const addTransferBtn = document.getElementById('add-transfer-btn');
     const firstTransactionBtn = document.getElementById('first-transaction-btn');
@@ -42,201 +36,109 @@ function setupModalEvents() {
     const closeModalButtons = document.querySelectorAll('.close-modal');
     const cancelDeleteBtn = document.getElementById('cancel-delete');
     const confirmDeleteBtn = document.getElementById('confirm-delete');
-    
-    // Botones de paginación
     const prevPageBtn = document.getElementById('prev-page');
     const nextPageBtn = document.getElementById('next-page');
-    
-    // Filtros
     const searchInput = document.getElementById('search-transactions');
     const typeFilter = document.getElementById('filter-type');
     const accountFilter = document.getElementById('filter-account');
+    const amountInputs = document.querySelectorAll('#transaction-amount, #transfer-amount');
     
-    // Abrir modal para agregar transacción
-    if (addTransactionBtn) {
-        addTransactionBtn.addEventListener('click', function() {
-            openTransactionModal();
-        });
-    }
+    if (addTransactionBtn) addTransactionBtn.addEventListener('click', openTransactionModal);
+    if (addTransferBtn) addTransferBtn.addEventListener('click', openTransferModal);
+    if (firstTransactionBtn) firstTransactionBtn.addEventListener('click', openTransactionModal);
     
-    // Abrir modal para transferencia
-    if (addTransferBtn) {
-        addTransferBtn.addEventListener('click', function() {
-            openTransferModal();
-        });
-    }
+    closeModalButtons.forEach(button => button.addEventListener('click', closeModals));
     
-    // Abrir modal desde el botón de "primera transacción"
-    if (firstTransactionBtn) {
-        firstTransactionBtn.addEventListener('click', function() {
-            openTransactionModal();
-        });
-    }
-    
-    // Cerrar modales al hacer clic en la X
-    closeModalButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            closeModals();
-        });
-    });
-    
-    // Cerrar modales al hacer clic fuera del contenido
     [transactionModal, transferModal, deleteModal].forEach(modal => {
         if (modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeModals();
-                }
+            modal.addEventListener('click', e => {
+                if (e.target === modal) closeModals();
             });
         }
     });
     
-    // Enviar formulario de transacción
-    if (transactionForm) {
-        transactionForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveTransaction();
-        });
-    }
+    if (transactionForm) transactionForm.addEventListener('submit', e => {
+        e.preventDefault();
+        saveTransaction();
+    });
     
-    // Enviar formulario de transferencia
-    if (transferForm) {
-        transferForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveTransfer();
-        });
-    }
+    if (transferForm) transferForm.addEventListener('submit', e => {
+        e.preventDefault();
+        saveTransfer();
+    });
     
-    // Cancelar eliminación
-    if (cancelDeleteBtn) {
-        cancelDeleteBtn.addEventListener('click', function() {
-            closeModals();
-        });
-    }
+    if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', closeModals);
     
-    // Confirmar eliminación - MODIFICADO
-    if (confirmDeleteBtn) {
-        confirmDeleteBtn.addEventListener('click', function() {
-            deleteTransaction(currentTransactionId, currentIsTransfer);
-        });
-    }
+    if (confirmDeleteBtn) confirmDeleteBtn.addEventListener('click', () => {
+        deleteTransaction(currentTransactionId, currentIsTransfer);
+    });
     
-    // Paginación
-    if (prevPageBtn) {
-        prevPageBtn.addEventListener('click', function() {
-            if (currentPage > 1) {
-                currentPage--;
-                updateTransactionsList();
-            }
-        });
-    }
-    
-    if (nextPageBtn) {
-        nextPageBtn.addEventListener('click', function() {
-            // Calcular total de páginas con todas las transacciones
-            const allTransactions = getAllTransactions();
-            const totalPages = Math.ceil(allTransactions.length / transactionsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                updateTransactionsList();
-            }
-        });
-    }
-    
-    // Filtros
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            currentPage = 1;
-            filterTransactions();
-        });
-    }
-    
-    if (typeFilter) {
-        typeFilter.addEventListener('change', function() {
-            currentPage = 1;
-            filterTransactions();
-        });
-    }
-    
-    if (accountFilter) {
-        accountFilter.addEventListener('change', function() {
-            currentPage = 1;
-            filterTransactions();
-        });
-    }
-    
-    // Cerrar con tecla Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeModals();
+    if (prevPageBtn) prevPageBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            updateTransactionsList();
         }
     });
     
-    // Validar monto en tiempo real
-    const amountInputs = document.querySelectorAll('#transaction-amount, #transfer-amount');
-    amountInputs.forEach(input => {
-        input.addEventListener('input', function() {
-            validateAmountInput(this);
-        });
+    if (nextPageBtn) nextPageBtn.addEventListener('click', () => {
+        const allTransactions = getAllTransactions();
+        const totalPages = Math.ceil(allTransactions.length / transactionsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            updateTransactionsList();
+        }
     });
     
-    // Establecer fecha actual por defecto
-    setCurrentDate();
+    if (searchInput) searchInput.addEventListener('input', () => {
+        currentPage = 1;
+        filterTransactions();
+    });
     
-    // Agregar estilos para transferencias
+    if (typeFilter) typeFilter.addEventListener('change', () => {
+        currentPage = 1;
+        filterTransactions();
+    });
+    
+    if (accountFilter) accountFilter.addEventListener('change', () => {
+        currentPage = 1;
+        filterTransactions();
+    });
+    
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeModals();
+    });
+    
+    amountInputs.forEach(input => {
+        input.addEventListener('input', () => validateAmountInput(input));
+    });
+    
+    setCurrentDate();
     addTransferStyles();
 }
 
-// Agregar estilos CSS para transferencias
 function addTransferStyles() {
     const style = document.createElement('style');
     style.textContent = `
-        .transaction-item.transfer {
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
-        }
-        
-        .transaction-item.transfer:hover {
-            background-color: #ffeaa7;
-        }
-        
-        .transfer-badge {
-            background-color: #ffc107;
-            color: #000;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
-        
-        .transaction-amount.transfer {
-            color: #ffc107;
-            font-weight: bold;
-        }
+        .transaction-item.transfer { background-color: #fff3cd; border-left: 4px solid #ffc107; }
+        .transaction-item.transfer:hover { background-color: #ffeaa7; }
+        .transfer-badge { background-color: #ffc107; color: #000; padding: 2px 8px; border-radius: 12px; font-size: 0.8em; font-weight: bold; }
+        .transaction-amount.transfer { color: #ffc107; font-weight: bold; }
     `;
     document.head.appendChild(style);
 }
 
-// Validar que el monto no sea negativo
 function validateAmountInput(input) {
     const value = parseFloat(input.value);
-    if (isNaN(value) || value <= 0) {
-        input.setCustomValidity('El monto debe ser mayor a 0');
-    } else {
-        input.setCustomValidity('');
-    }
+    input.setCustomValidity(isNaN(value) || value <= 0 ? 'El monto debe ser mayor a 0' : '');
 }
 
-// Establecer fecha actual por defecto
 function setCurrentDate() {
     const today = new Date().toISOString().split('T')[0];
-    const dateInputs = document.querySelectorAll('#transaction-date, #transfer-date');
-    dateInputs.forEach(input => {
+    document.querySelectorAll('#transaction-date, #transfer-date').forEach(input => {
         input.value = today;
     });
 }
 
-// Cargar datos iniciales
 async function loadInitialData() {
     if (isLoading) return;
     
@@ -244,31 +146,25 @@ async function loadInitialData() {
         isLoading = true;
         showLoadingState(true);
         
-        // Obtener usuario actual
         const userData = getLocalStorage('currentUser');
-        if (!userData || !userData.id) {
+        if (!userData?.id) {
             showNotification('Error al cargar datos de usuario', 'error');
             return;
         }
         
         console.log('Cargando datos iniciales...');
-        
-        // Primero cargar las cuentas (son esenciales para los dropdowns)
         await loadAccounts(userData.id);
         console.log('Cuentas cargadas:', accountsData.length);
         
-        // VERIFICAR SI HAY CUENTAS ANTES DE CARGAR EL RESTO
         if (accountsData.length === 0) {
-            // No hay cuentas, mostrar estado vacío y salir
             updateUI();
             showLoadingState(false);
             return;
         }
 
-        // Luego cargar el resto de datos en paralelo
         await Promise.all([
             loadTransactions(userData.id),
-            loadInternalTransfers(), // Cargar transferencias internas
+            loadInternalTransfers(),
             loadCategories(),
             loadPaymentMethods()
         ]);
@@ -279,7 +175,6 @@ async function loadInitialData() {
         console.log('Categorías:', categoriesData.length);
         console.log('Métodos de pago:', paymentMethodsData.length);
         
-        // Forzar la actualización de la UI
         updateUI();
         
     } catch (error) {
@@ -291,7 +186,6 @@ async function loadInitialData() {
     }
 }
 
-// Cargar transferencias internas
 async function loadInternalTransfers() {
     try {
         console.log('Cargando transferencias internas...');
@@ -303,7 +197,6 @@ async function loadInternalTransfers() {
     }
 }
 
-// Actualizar toda la UI después de cargar los datos
 function updateUI() {
     populateAccountFilter();
     populateAccountDropdowns();
@@ -312,7 +205,6 @@ function updateUI() {
     updateTransactionsList();
 }
 
-// Cargar transacciones
 async function loadTransactions(userId) {
     try {
         console.log('Cargando transacciones...');
@@ -326,18 +218,15 @@ async function loadTransactions(userId) {
     }
 }
 
-// Cargar cuentas
 async function loadAccounts(userId) {
     try {
         console.log('Cargando cuentas...');
         accountsData = await accountService.getAccountsByUserId(userId) || [];
         console.log('Cuentas cargadas:', accountsData.length);
         
-        // Si no hay cuentas, mostrar advertencia
         if (accountsData.length === 0) {
             console.warn('No se encontraron cuentas para el usuario');
             showNotification('No tienes cuentas registradas. Crea una cuenta primero.', 'warning');
-            
         }
     } catch (error) {
         console.error('Error cargando cuentas:', error);
@@ -347,7 +236,6 @@ async function loadAccounts(userId) {
     }
 }
 
-// Cargar categorías
 async function loadCategories() {
     try {
         console.log('Cargando categorías...');
@@ -361,29 +249,23 @@ async function loadCategories() {
     }
 }
 
-// Cargar métodos de pago
 async function loadPaymentMethods() {
     try {
         console.log('Cargando métodos de pago...');
         paymentMethodsData = await fetchAPI('/api/v1/payment-methods/all') || [
-            { id: 1, name: 'Efectivo' },
-            { id: 2, name: 'Tarjeta de Débito' },
-            { id: 3, name: 'Tarjeta de Crédito' },
-            { id: 4, name: 'Transferencia Bancaria' }
+            { id: 1, name: 'Efectivo' }, { id: 2, name: 'Tarjeta de Débito' },
+            { id: 3, name: 'Tarjeta de Crédito' }, { id: 4, name: 'Transferencia Bancaria' }
         ];
         console.log('Métodos de pago cargados:', paymentMethodsData.length);
     } catch (error) {
         console.error('Error cargando métodos de pago:', error);
         paymentMethodsData = [
-            { id: 1, name: 'Efectivo' },
-            { id: 2, name: 'Tarjeta de Débito' },
-            { id: 3, name: 'Tarjeta de Crédito' },
-            { id: 4, name: 'Transferencia Bancaria' }
+            { id: 1, name: 'Efectivo' }, { id: 2, name: 'Tarjeta de Débito' },
+            { id: 3, name: 'Tarjeta de Crédito' }, { id: 4, name: 'Transferencia Bancaria' }
         ];
     }
 }
 
-// Poblar dropdown de filtro de cuentas
 function populateAccountFilter() {
     const accountFilter = document.getElementById('filter-account');
     if (!accountFilter) {
@@ -392,11 +274,8 @@ function populateAccountFilter() {
     }
     
     console.log('Poblando filtro de cuentas con', accountsData.length, 'cuentas');
-    
-    // Limpiar opciones excepto la primera
     accountFilter.innerHTML = '<option value="">Todas las cuentas</option>';
     
-    // Agregar cuentas
     accountsData.forEach(account => {
         const option = document.createElement('option');
         option.value = account.id;
@@ -407,7 +286,6 @@ function populateAccountFilter() {
     console.log('Filtro de cuentas poblado con', accountFilter.options.length, 'opciones');
 }
 
-// Poblar dropdowns de cuentas
 function populateAccountDropdowns() {
     const dropdowns = [
         'transaction-account',
@@ -424,12 +302,10 @@ function populateAccountDropdowns() {
             return;
         }
         
-        // Limpiar opciones
         dropdown.innerHTML = dropdownId === 'transaction-account' ? 
             '<option value="">Selecciona una cuenta</option>' :
             '<option value="">Selecciona cuenta</option>';
         
-        // Agregar cuentas
         accountsData.forEach(account => {
             const option = document.createElement('option');
             option.value = account.id;
@@ -441,7 +317,6 @@ function populateAccountDropdowns() {
     });
 }
 
-// Poblar dropdown de categorías
 function populateCategoryDropdown() {
     const dropdown = document.getElementById('transaction-category');
     if (!dropdown) {
@@ -450,11 +325,8 @@ function populateCategoryDropdown() {
     }
     
     console.log('Poblando dropdown de categorías con', categoriesData.length, 'categorías');
-    
-    // Limpiar opciones
     dropdown.innerHTML = '<option value="">Selecciona una categoría</option>';
     
-    // Agregar categorías
     categoriesData.forEach(category => {
         const option = document.createElement('option');
         option.value = category.id;
@@ -465,7 +337,6 @@ function populateCategoryDropdown() {
     console.log('Dropdown de categorías poblado con', dropdown.options.length, 'opciones');
 }
 
-// Poblar dropdown de métodos de pago
 function populatePaymentMethodDropdown() {
     const dropdown = document.getElementById('transaction-payment-method');
     if (!dropdown) {
@@ -474,11 +345,8 @@ function populatePaymentMethodDropdown() {
     }
     
     console.log('Poblando dropdown de métodos de pago con', paymentMethodsData.length, 'métodos');
-    
-    // Limpiar opciones
     dropdown.innerHTML = '<option value="">Selecciona un método de pago</option>';
     
-    // Agregar métodos de pago
     paymentMethodsData.forEach(method => {
         const option = document.createElement('option');
         option.value = method.id;
@@ -489,9 +357,7 @@ function populatePaymentMethodDropdown() {
     console.log('Dropdown de métodos de pago poblado con', dropdown.options.length, 'opciones');
 }
 
-// Abrir modal para agregar transacción
 function openTransactionModal() {
-    // Verificar que tenemos cuentas cargadas
     if (accountsData.length === 0) {
         showNotification('Primero debes crear una cuenta', 'warning');
         return;
@@ -500,26 +366,19 @@ function openTransactionModal() {
     const modal = document.getElementById('transaction-modal');
     const form = document.getElementById('transaction-form');
     
-    // Desactivar autocompletar
     form.setAttribute('autocomplete', 'off');
-    
-    // Limpiar formulario
     form.reset();
     setCurrentDate();
     
-    // Mostrar modal
     modal.classList.add('show');
     document.body.style.overflow = 'hidden';
     
-    // Enfocar el primer campo
     setTimeout(() => {
         document.getElementById('transaction-type').focus();
     }, 100);
 }
 
-// Abrir modal para transferencia
 function openTransferModal() {
-    // Verificar que tenemos al menos 2 cuentas
     if (accountsData.length < 2) {
         showNotification('Necesitas al menos 2 cuentas para hacer transferencias', 'warning');
         return;
@@ -528,24 +387,18 @@ function openTransferModal() {
     const modal = document.getElementById('transfer-modal');
     const form = document.getElementById('transfer-form');
     
-    // Desactivar autocompletar
     form.setAttribute('autocomplete', 'off');
-    
-    // Limpiar formulario
     form.reset();
     setCurrentDate();
     
-    // Mostrar modal
     modal.classList.add('show');
     document.body.style.overflow = 'hidden';
     
-    // Enfocar el primer campo
     setTimeout(() => {
         document.getElementById('transfer-amount').focus();
     }, 100);
 }
 
-// Abrir modal de confirmación para eliminar - MODIFICADO
 function openDeleteModal(transactionId, isTransfer = false) {
     const modal = document.getElementById('delete-modal');
     const descriptionElement = document.getElementById('delete-transaction-description');
@@ -568,20 +421,14 @@ function openDeleteModal(transactionId, isTransfer = false) {
     document.body.style.overflow = 'hidden';
 }
 
-// Cerrar todos los modales
 function closeModals() {
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        modal.classList.remove('show');
-    });
+    document.querySelectorAll('.modal').forEach(modal => modal.classList.remove('show'));
     document.body.style.overflow = 'auto';
     currentTransactionId = null;
     currentIsTransfer = false;
 }
 
-// Obtener todas las transacciones (normales + transferencias)
 function getAllTransactions() {
-    // Formatear transferencias internas para que coincidan con el formato de transacciones
     const transferTransactions = internalTransfersData.map(transfer => ({
         id: transfer.id,
         type: 'TRANSFER',
@@ -595,23 +442,16 @@ function getAllTransactions() {
         transferData: transfer
     }));
 
-    // Combinar y ordenar por fecha (más recientes primero)
     const allTransactions = [...transactionsData, ...transferTransactions];
     
-    // Ordenar por ID de forma descendente (los más nuevos primero)
     return allTransactions.sort((a, b) => {
-        // Si ambos tienen ID numérico, ordenar por ID
-        if (a.id && b.id) {
-            return b.id - a.id;
-        }
-        // Si no, ordenar por fecha (más reciente primero)
+        if (a.id && b.id) return b.id - a.id;
         const dateA = a.date ? new Date(a.date) : new Date(0);
         const dateB = b.date ? new Date(b.date) : new Date(0);
         return dateB - dateA;
     });
 }
 
-// Filtrar transacciones - VERSIÓN CORREGIDA
 function filterTransactions() {
     const searchTerm = document.getElementById('search-transactions').value.toLowerCase();
     const typeFilterValue = document.getElementById('filter-type').value;
@@ -620,7 +460,6 @@ function filterTransactions() {
     let allTransactions = getAllTransactions();
     let filteredTransactions = allTransactions;
     
-    // Aplicar filtros
     if (searchTerm) {
         filteredTransactions = filteredTransactions.filter(transaction =>
             transaction.description.toLowerCase().includes(searchTerm)
@@ -640,7 +479,6 @@ function filterTransactions() {
     }
     
     if (accountFilterValue) {
-        // Obtener el nombre de la cuenta seleccionada
         const accountOption = document.querySelector(`#filter-account option[value="${accountFilterValue}"]`);
         const accountName = accountOption ? accountOption.textContent : '';
         
@@ -649,12 +487,10 @@ function filterTransactions() {
         );
     }
     
-    // Reiniciar a página 1 cuando se filtran resultados
     currentPage = 1;
     updateTransactionsList(filteredTransactions);
 }
 
-// Actualizar lista de transacciones en la UI - VERSIÓN CORREGIDA
 function updateTransactionsList(transactions = null) {
     const transactionsList = document.getElementById('transactions-list');
     const pagination = document.getElementById('pagination');
@@ -664,10 +500,7 @@ function updateTransactionsList(transactions = null) {
     
     if (!transactionsList) return;
     
-    // Usar transacciones proporcionadas o todas
     const displayTransactions = transactions || getAllTransactions();
-    
-    // Calcular paginación (10 transacciones por página)
     const totalPages = Math.ceil(displayTransactions.length / transactionsPerPage);
     const startIndex = (currentPage - 1) * transactionsPerPage;
     const endIndex = startIndex + transactionsPerPage;
@@ -684,12 +517,9 @@ function updateTransactionsList(transactions = null) {
         
         pagination.style.display = 'none';
         
-        // Reconfigurar evento del botón
         const firstTransactionBtn = document.getElementById('first-transaction-btn');
         if (firstTransactionBtn) {
-            firstTransactionBtn.addEventListener('click', function() {
-                openTransactionModal();
-            });
+            firstTransactionBtn.addEventListener('click', openTransactionModal);
         }
         
         return;
@@ -697,38 +527,27 @@ function updateTransactionsList(transactions = null) {
     
     pagination.style.display = 'flex';
     
-    let transactionsHTML = '';
-    
-    paginatedTransactions.forEach(transaction => {
-        // Determinar tipo de transacción
-        let typeClass = '';
-        let iconClass = '';
+    const transactionsHTML = paginatedTransactions.map(transaction => {
+        const typeConfig = {
+            'INCOME': { class: 'income', icon: 'fa-arrow-down' },
+            'EGRESS': { class: 'expense', icon: 'fa-arrow-up' },
+            'TRANSFER': { class: 'transfer', icon: 'fa-exchange-alt' }
+        };
         
-        if (transaction.type === 'INCOME' || transaction.transactionType === 'INCOME') {
-            typeClass = 'income';
-            iconClass = 'fa-arrow-down'; // Entrada de dinero
-        } else if (transaction.type === 'EGRESS' || transaction.transactionType === 'EGRESS') {
-            typeClass = 'expense';
-            iconClass = 'fa-arrow-up'; // Salida de dinero
-        } else if (transaction.type === 'TRANSFER' || transaction.isTransfer) {
-            typeClass = 'transfer';
-            iconClass = 'fa-exchange-alt';
-        }
+        const typeKey = transaction.transactionType || transaction.type;
+        const config = typeConfig[typeKey] || { class: '', icon: 'fa-exchange-alt' };
         
-        // Formatear fecha
         const transactionDate = transaction.date ? formatDate(transaction.date) : 'Fecha no disponible';
-        
-        // Obtener nombre de la cuenta
         const accountName = transaction.accountName || 'Cuenta no disponible';
-        
-        // Obtener nombre de categoría
         const categoryName = transaction.categoryName || 
                             (transaction.categoryId ? getCategoryName(transaction.categoryId) : 'Sin categoría');
         
-        transactionsHTML += `
-<div class="transaction-item ${typeClass}">
-    <div class="transaction-icon ${typeClass}">
-        <i class="fas ${iconClass}"></i>
+        const amountPrefix = config.class === 'expense' || config.class === 'transfer' ? '-' : '+';
+        
+        return `
+<div class="transaction-item ${config.class}">
+    <div class="transaction-icon ${config.class}">
+        <i class="fas ${config.icon}"></i>
     </div>
     <div class="transaction-details">
         <h4 class="transaction-description">${transaction.description || 'Sin descripción'}</h4>
@@ -739,8 +558,8 @@ function updateTransactionsList(transactions = null) {
             ${transaction.paymentMethodName ? `<span class="payment-badge"><i class="fas fa-credit-card"></i> ${transaction.paymentMethodName}</span>` : ''}
         </div>
     </div>
-    <div class="transaction-amount ${typeClass}">
-        ${typeClass === 'expense' || typeClass === 'transfer' ? '-' : '+'}${formatCurrency(transaction.amount || 0)}
+    <div class="transaction-amount ${config.class}">
+        ${amountPrefix}${formatCurrency(transaction.amount || 0)}
     </div>
     <div class="transaction-actions">
         <button class="transaction-action-btn delete" data-id="${transaction.id}" data-is-transfer="${transaction.isTransfer || false}">
@@ -749,18 +568,15 @@ function updateTransactionsList(transactions = null) {
     </div>
 </div>
         `;
-    });
+    }).join('');
     
     transactionsList.innerHTML = transactionsHTML;
     
-    // Actualizar información de paginación
     pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
     prevPageBtn.disabled = currentPage === 1;
     nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
     
-    // Agregar eventos a los botones de eliminar
-    const deleteButtons = document.querySelectorAll('.transaction-action-btn.delete');
-    deleteButtons.forEach(button => {
+    document.querySelectorAll('.transaction-action-btn.delete').forEach(button => {
         button.addEventListener('click', function() {
             const transactionId = this.getAttribute('data-id');
             const isTransfer = this.getAttribute('data-is-transfer') === 'true';
@@ -769,13 +585,11 @@ function updateTransactionsList(transactions = null) {
     });
 }
 
-// Obtener nombre de categoría
 function getCategoryName(categoryId) {
     const category = categoriesData.find(cat => cat.id == categoryId);
     return category ? category.name : 'Categoría desconocida';
 }
 
-// Guardar transacción - CON VALIDACIÓN DE BALANCE
 async function saveTransaction() {
     const saveButton = document.getElementById('save-transaction-btn');
     const type = document.getElementById('transaction-type').value;
@@ -786,7 +600,6 @@ async function saveTransaction() {
     const categoryId = document.getElementById('transaction-category').value;
     const paymentMethodId = document.getElementById('transaction-payment-method').value;
     
-    // Validaciones básicas
     if (!type) {
         showNotification('Debes seleccionar un tipo de transacción', 'error');
         return;
@@ -823,22 +636,17 @@ async function saveTransaction() {
     }
     
     try {
-        // Cambiar estado del botón a loading
         const originalText = saveButton.innerHTML;
         saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         saveButton.disabled = true;
         
-        // VALIDACIÓN DE BALANCE - Solo para gastos
         if (type === 'EGRESS') {
             const account = accountsData.find(acc => acc.id == accountId);
             if (account) {
-                // Obtener el balance actualizado de la cuenta
                 const currentBalance = await accountService.getAccountBalance(accountId);
                 
                 if (currentBalance !== null && currentBalance < amount) {
                     showNotification(`Saldo insuficiente. Balance disponible en la cuenta: ${formatCurrency(currentBalance)}`, 'error');
-                    
-                    // Restaurar estado del botón
                     saveButton.innerHTML = 'Guardar Transacción';
                     saveButton.disabled = false;
                     return;
@@ -863,27 +671,24 @@ async function saveTransaction() {
         if (result) {
             showNotification('Transacción creada correctamente', 'success');
             closeModals();
-            await loadInitialData(); // Recargar todos los datos
+            await loadInitialData();
         }
         
     } catch (error) {
         console.error('Error guardando transacción:', error);
         showNotification('Error al guardar la transacción', 'error');
     } finally {
-        // Restaurar estado del botón
         saveButton.innerHTML = 'Guardar Transacción';
         saveButton.disabled = false;
     }
 }
 
-// Guardar transferencia - CON VALIDACIÓN DE BALANCE
 async function saveTransfer() {
     const saveButton = document.getElementById('save-transfer-btn');
     const amount = parseFloat(document.getElementById('transfer-amount').value);
     const originAccountId = document.getElementById('transfer-origin-account').value;
     const destinationAccountId = document.getElementById('transfer-destination-account').value;
     
-    // Validaciones básicas
     if (isNaN(amount) || amount <= 0) {
         showNotification('El monto debe ser un número válido y mayor a 0', 'error');
         return;
@@ -905,28 +710,22 @@ async function saveTransfer() {
     }
     
     try {
-        // Cambiar estado del botón a loading
         const originalText = saveButton.innerHTML;
         saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
         saveButton.disabled = true;
         
-        // VALIDACIÓN DE BALANCE - Para transferencias
         const originAccount = accountsData.find(acc => acc.id == originAccountId);
         if (originAccount) {
-            // Obtener el balance actualizado de la cuenta de origen
             const currentBalance = await accountService.getAccountBalance(originAccountId);
             
             if (currentBalance !== null && currentBalance < amount) {
                 showNotification(`Saldo insuficiente en la cuenta de origen. Balance disponible: ${formatCurrency(currentBalance)}`, 'error');
-                
-                // Restaurar estado del botón
                 saveButton.innerHTML = 'Realizar Transferencia';
                 saveButton.disabled = false;
                 return;
             }
         }
         
-        // Crear el objeto para la transferencia interna
         const transferData = {
             amount: amount,
             originAccountId: parseInt(originAccountId),
@@ -935,33 +734,23 @@ async function saveTransfer() {
         
         console.log('Enviando datos de transferencia interna:', transferData);
         
-        // Usar el servicio de transferencias internas
         await internalTransferService.createInternalTransfer(transferData);
         
         showNotification('Transferencia interna realizada correctamente', 'success');
         closeModals();
-        await loadInitialData(); // Recargar todos los datos
+        await loadInitialData();
         
     } catch (error) {
         console.error('Error realizando transferencia interna:', error);
         showNotification('Error al realizar la transferencia interna: ' + (error.message || 'Error desconocido'), 'error');
     } finally {
-        // Restaurar estado del botón
         saveButton.innerHTML = 'Realizar Transferencia';
         saveButton.disabled = false;
     }
 }
 
-// Obtener nombre de cuenta
-function getAccountName(accountId) {
-    const account = accountsData.find(acc => acc.id == accountId);
-    return account ? account.name : 'Cuenta desconocida';
-}
-
-// Eliminar transacción - MODIFICADO
 async function deleteTransaction(transactionId, isTransfer = false) {
     try {
-        // Cambiar estado del botón a loading
         const confirmButton = document.getElementById('confirm-delete');
         const originalText = confirmButton.innerHTML;
         confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
@@ -975,23 +764,20 @@ async function deleteTransaction(transactionId, isTransfer = false) {
             result = await transactionService.deleteTransaction(transactionId);
         }
         
-        // Para DELETE, asumimos que si no hay error, fue exitoso
         showNotification(isTransfer ? 'Transferencia eliminada correctamente' : 'Transacción eliminada correctamente', 'success');
         closeModals();
-        await loadInitialData(); // Recargar todos los datos
+        await loadInitialData();
         
     } catch (error) {
         console.error('Error eliminando:', error);
         showNotification(`Error al eliminar ${isTransfer ? 'la transferencia' : 'la transacción'}`, 'error');
     } finally {
-        // Restaurar estado del botón
         const confirmButton = document.getElementById('confirm-delete');
         confirmButton.innerHTML = 'Eliminar';
         confirmButton.disabled = false;
     }
 }
 
-// Mostrar/ocultar estado de carga
 function showLoadingState(show) {
     const transactionsList = document.getElementById('transactions-list');
     if (!transactionsList) return;
