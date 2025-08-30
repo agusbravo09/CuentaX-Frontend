@@ -1,0 +1,41 @@
+/* Estilos para la nota del desarrollador */
+.developer-note {
+    background-color: #FFFBEB;
+    border: 1px solid #F59E0B;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin: 15px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.developer-note i {
+    color: #F59E0B;
+    font-size: 16px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.developer-note p {
+    margin: 0;
+    color: #78350F;
+}
+
+.developer-note strong {
+    color: #B45309;
+}
+
+/* Responsive para móviles */
+@media (max-width: 576px) {
+    .developer-note {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+    
+    .developer-note i {
+        font-size: 14px;
+    }
+}

@@ -1,4 +1,3 @@
-/* transactions.css - Estilos para la sección de transacciones */
 :root {
     --income-color: #10B981;
     --expense-color: #EF4444;
@@ -535,7 +534,6 @@
     font-size: 1.1rem;
   }
   
-  /* Indicador visual mejorado para transferencias */
   .transfer-indicator {
     display: flex;
     align-items: center;
@@ -550,13 +548,11 @@
     width: 100%;
   }
   
-  /* Ajuste para el contenedor de transacciones en móvil */
   .transactions-list {
     gap: 1rem;
   }
 }
 
-/* Mejora opcional: Estilo para texto de cuentas en transferencias */
 .transfer-accounts {
     font-weight: 600;
     color: var(--gray-700);
@@ -565,7 +561,6 @@
     font-size: 0.9em;
 }
 
-/* Para pantallas más pequeñas (menos de 400px) */
 @media (max-width: 400px) {
   .transaction-item.transfer {
     padding: 1rem;
