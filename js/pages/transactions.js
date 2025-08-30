@@ -1,6 +1,3 @@
-// transactions.js - Gestión de transacciones
-console.log('Transactions cargado');
-
 let transactionsData = [];
 let internalTransfersData = [];
 let accountsData = [];
@@ -13,7 +10,6 @@ const transactionsPerPage = 10;
 let isLoading = false;
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM cargado - Inicializando gestión de transacciones');
     
     if (!isUserAuthenticated()) {
         redirectToLogin();
@@ -152,9 +148,7 @@ async function loadInitialData() {
             return;
         }
         
-        console.log('Cargando datos iniciales...');
         await loadAccounts(userData.id);
-        console.log('Cuentas cargadas:', accountsData.length);
         
         if (accountsData.length === 0) {
             updateUI();
@@ -162,19 +156,13 @@ async function loadInitialData() {
             return;
         }
 
+        await loadInternalTransfers();
+        
         await Promise.all([
             loadTransactions(userData.id),
-            loadInternalTransfers(),
             loadCategories(),
             loadPaymentMethods()
         ]);
-        
-        console.log('Todos los datos cargados correctamente');
-        console.log('Transacciones:', transactionsData.length);
-        console.log('Transferencias internas:', internalTransfersData.length);
-        console.log('Categorías:', categoriesData.length);
-        console.log('Métodos de pago:', paymentMethodsData.length);
-        
         updateUI();
         
     } catch (error) {
@@ -188,9 +176,21 @@ async function loadInitialData() {
 
 async function loadInternalTransfers() {
     try {
-        console.log('Cargando transferencias internas...');
-        internalTransfersData = await internalTransferService.getAllInternalTransfers() || [];
-        console.log('Transferencias internas cargadas:', internalTransfersData.length);
+        const userData = getLocalStorage('currentUser');
+        if (!userData?.id) {
+            internalTransfersData = [];
+            return;
+        }
+        
+        const allTransfers = await internalTransferService.getAllInternalTransfers() || [];
+        
+        internalTransfersData = allTransfers.filter(transfer => {
+            const originBelongsToUser = accountsData.some(acc => acc.id === transfer.originAccountId);
+            const destinationBelongsToUser = accountsData.some(acc => acc.id === transfer.destinationAccountId);
+            
+            return originBelongsToUser && destinationBelongsToUser;
+        });
+        
     } catch (error) {
         console.error('Error cargando transferencias internas:', error);
         internalTransfersData = [];
@@ -207,9 +207,7 @@ function updateUI() {
 
 async function loadTransactions(userId) {
     try {
-        console.log('Cargando transacciones...');
         transactionsData = await transactionService.getTransactionsByUserId(userId) || [];
-        console.log('Transacciones cargadas:', transactionsData.length);
     } catch (error) {
         console.error('Error cargando transacciones:', error);
         showNotification('Error al cargar transacciones', 'error');
@@ -220,9 +218,7 @@ async function loadTransactions(userId) {
 
 async function loadAccounts(userId) {
     try {
-        console.log('Cargando cuentas...');
         accountsData = await accountService.getAccountsByUserId(userId) || [];
-        console.log('Cuentas cargadas:', accountsData.length);
         
         if (accountsData.length === 0) {
             console.warn('No se encontraron cuentas para el usuario');
@@ -238,9 +234,7 @@ async function loadAccounts(userId) {
 
 async function loadCategories() {
     try {
-        console.log('Cargando categorías...');
         categoriesData = await categoryService.getCategories() || [];
-        console.log('Categorías cargadas:', categoriesData.length);
     } catch (error) {
         console.error('Error cargando categorías:', error);
         showNotification('Error al cargar categorías', 'error');
@@ -251,12 +245,10 @@ async function loadCategories() {
 
 async function loadPaymentMethods() {
     try {
-        console.log('Cargando métodos de pago...');
         paymentMethodsData = await fetchAPI('/api/v1/payment-methods/all') || [
             { id: 1, name: 'Efectivo' }, { id: 2, name: 'Tarjeta de Débito' },
             { id: 3, name: 'Tarjeta de Crédito' }, { id: 4, name: 'Transferencia Bancaria' }
         ];
-        console.log('Métodos de pago cargados:', paymentMethodsData.length);
     } catch (error) {
         console.error('Error cargando métodos de pago:', error);
         paymentMethodsData = [
@@ -273,7 +265,6 @@ function populateAccountFilter() {
         return;
     }
     
-    console.log('Poblando filtro de cuentas con', accountsData.length, 'cuentas');
     accountFilter.innerHTML = '<option value="">Todas las cuentas</option>';
     
     accountsData.forEach(account => {
@@ -283,7 +274,6 @@ function populateAccountFilter() {
         accountFilter.appendChild(option);
     });
     
-    console.log('Filtro de cuentas poblado con', accountFilter.options.length, 'opciones');
 }
 
 function populateAccountDropdowns() {
@@ -292,8 +282,7 @@ function populateAccountDropdowns() {
         'transfer-origin-account',
         'transfer-destination-account'
     ];
-    
-    console.log('Poblando dropdowns de cuentas con', accountsData.length, 'cuentas');
+
     
     dropdowns.forEach(dropdownId => {
         const dropdown = document.getElementById(dropdownId);
@@ -313,7 +302,6 @@ function populateAccountDropdowns() {
             dropdown.appendChild(option);
         });
         
-        console.log('Dropdown', dropdownId, 'poblado con', dropdown.options.length, 'opciones');
     });
 }
 
@@ -324,7 +312,6 @@ function populateCategoryDropdown() {
         return;
     }
     
-    console.log('Poblando dropdown de categorías con', categoriesData.length, 'categorías');
     dropdown.innerHTML = '<option value="">Selecciona una categoría</option>';
     
     categoriesData.forEach(category => {
@@ -334,7 +321,6 @@ function populateCategoryDropdown() {
         dropdown.appendChild(option);
     });
     
-    console.log('Dropdown de categorías poblado con', dropdown.options.length, 'opciones');
 }
 
 function populatePaymentMethodDropdown() {
@@ -344,7 +330,6 @@ function populatePaymentMethodDropdown() {
         return;
     }
     
-    console.log('Poblando dropdown de métodos de pago con', paymentMethodsData.length, 'métodos');
     dropdown.innerHTML = '<option value="">Selecciona un método de pago</option>';
     
     paymentMethodsData.forEach(method => {
@@ -354,7 +339,6 @@ function populatePaymentMethodDropdown() {
         dropdown.appendChild(option);
     });
     
-    console.log('Dropdown de métodos de pago poblado con', dropdown.options.length, 'opciones');
 }
 
 function openTransactionModal() {
@@ -433,12 +417,14 @@ function getAllTransactions() {
         id: transfer.id,
         type: 'TRANSFER',
         amount: transfer.amount,
-        description: `Origen: ${transfer.originAccountName || 'Cuenta origen'} → Destino: ${transfer.destinationAccountName || 'Cuenta destino'}`,
+        description: `Transferencia: ${transfer.originAccountName} → ${transfer.destinationAccountName}`,
         date: transfer.date,
-        accountName: transfer.originAccountName || 'Cuenta origen',
+        accountName: transfer.originAccountName,
         categoryName: 'Transferencia Interna',
         paymentMethodName: 'Transferencia Interna',
         isTransfer: true,
+        originAccountId: transfer.originAccountId, 
+        destinationAccountId: transfer.destinationAccountId, 
         transferData: transfer
     }));
 
@@ -479,13 +465,18 @@ function filterTransactions() {
     }
     
     if (accountFilterValue) {
-        const accountOption = document.querySelector(`#filter-account option[value="${accountFilterValue}"]`);
-        const accountName = accountOption ? accountOption.textContent : '';
-        
-        filteredTransactions = filteredTransactions.filter(transaction =>
-            transaction.accountName === accountName
-        );
-    }
+    const selectedAccount = accountsData.find(acc => acc.id == accountFilterValue);
+    const accountName = selectedAccount ? selectedAccount.name : '';
+    
+    filteredTransactions = filteredTransactions.filter(transaction => {
+        if (transaction.isTransfer) {
+            const transferOriginAccount = accountsData.find(acc => acc.name === transaction.accountName);
+            return transferOriginAccount && transferOriginAccount.id == accountFilterValue;
+        }
+
+        return transaction.accountName === accountName;
+    });
+}
     
     currentPage = 1;
     updateTransactionsList(filteredTransactions);
@@ -664,7 +655,6 @@ async function saveTransaction() {
             paymentMethodId: parseInt(paymentMethodId)
         };
         
-        console.log('Enviando datos de transacción:', transactionData);
         
         const result = await transactionService.createTransaction(transactionData);
         
@@ -732,7 +722,6 @@ async function saveTransfer() {
             destinationAccountId: parseInt(destinationAccountId)
         };
         
-        console.log('Enviando datos de transferencia interna:', transferData);
         
         await internalTransferService.createInternalTransfer(transferData);
         

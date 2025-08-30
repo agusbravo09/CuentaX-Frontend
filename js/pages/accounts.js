@@ -1,11 +1,7 @@
-// accounts.js - Gestión de cuentas
-console.log('Accounts cargado');
-
 let accountsData = [];
 let currentAccountId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM cargado - Inicializando gestión de cuentas');
     
     if (!isUserAuthenticated()) {
         redirectToLogin();
@@ -130,7 +126,6 @@ function closeModals() {
 }
 
 async function loadAccountsData() {
-    console.log('Cargando datos de cuentas...');
     
     try {
         const userData = getLocalStorage('currentUser');
@@ -269,7 +264,6 @@ async function saveAccount() {
             userId: userData.id
         };
         
-        console.log('Enviando datos al backend:', accountData);
         
         let result;
         

@@ -1,11 +1,6 @@
-// login.js - Lógica de la página de login
-console.log('Login cargado');
-
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM listo - inicializando login');
     
     if (getLocalStorage('authToken')) {
-        console.log('Usuario ya autenticado, redirigiendo...');
         redirectToDashboard();
         return;
     }
@@ -63,7 +58,6 @@ function setupEventListeners() {
 
 async function handleLogin(e) {
     e.preventDefault();
-    console.log('Manejando login...');
     
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
@@ -93,7 +87,6 @@ async function handleLogin(e) {
         setLocalStorage('userEmail', email);
         setLocalStorage('currentUser', result.data);
         
-        console.log('Login exitoso, redirigiendo...');
         showNotification('¡Login exitoso! Redirigiendo...', 'success');
         
         setTimeout(redirectToDashboard, 1000);
@@ -104,7 +97,6 @@ async function handleLogin(e) {
 
 async function handleRegister(e) {
     e.preventDefault();
-    console.log('Manejando registro...');
     
     const name = document.getElementById('signupName').value.trim();
     const email = document.getElementById('signupEmail').value.trim();

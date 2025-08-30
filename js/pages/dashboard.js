@@ -1,10 +1,6 @@
-// dashboard.js - Versión modificada sin transferencias internas
-console.log('Dashboard cargado');
-
 let userData = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM cargado - Inicializando dashboard');
     
     if (!isUserAuthenticated()) {
         redirectToLogin();
@@ -19,7 +15,6 @@ function isUserAuthenticated() {
 }
 
 async function loadDashboardData() {
-    console.log('Cargando datos del dashboard...');
     
     try {
         const userEmail = getLocalStorage('userEmail');
@@ -231,6 +226,5 @@ async function updateFinancialSummary(accounts, transactions) {
 }
 
 function showLoadingState(show) {
-    console.log(show ? 'Mostrando estado de carga...' : 'Ocultando estado de carga...');
     document.body.classList.toggle('loading', show);
 }

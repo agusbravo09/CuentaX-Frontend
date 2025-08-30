@@ -4,7 +4,6 @@ console.log('Auth API cargado');
 const API_BASE_URL = 'https://finanzapp-backend-a1rz.onrender.com';
 
 async function login(email, password) {
-    console.log('Intentando login con:', email);
     
     try {
         const credentials = btoa(`${email}:${password}`);
@@ -61,7 +60,6 @@ async function login(email, password) {
 }
 
 async function register(userData) {
-    console.log('Intentando registrar usuario:', userData);
     
     try {
         const response = await fetch(`${API_BASE_URL}/api/v1/users`, {

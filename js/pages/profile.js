@@ -1,12 +1,8 @@
-// profile.js - Gestión del perfil de usuario
-console.log('Profile cargado');
-
 let userData = null;
 let originalData = null;
 let isEditing = false;
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM cargado - Inicializando perfil');
     
     if (!isUserAuthenticated()) {
         redirectToLogin();
@@ -146,7 +142,6 @@ async function loadProfileData() {
         await loadUserStatistics();
         populateProfileForm();
         
-        console.log('Datos de perfil cargados:', userData);
         
     } catch (error) {
         console.error('Error cargando perfil:', error);
@@ -275,8 +270,6 @@ async function saveProfile() {
         };
 
         if (changingPassword) updateData.password = newPassword;
-
-        console.log('Actualizando perfil:', updateData);
 
         const updatedUser = await userService.updateUser(userData.id, updateData);
 

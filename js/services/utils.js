@@ -1,6 +1,3 @@
-// utils.js - Funciones globales básicas
-console.log('Utils cargado');
-
 function isUserAuthenticated() {
     return !!(getLocalStorage('authToken') && getLocalStorage('userEmail'));
 }
@@ -9,7 +6,6 @@ function isUserAuthenticated() {
 function setLocalStorage(key, value) {
     try {
         localStorage.setItem(key, JSON.stringify(value));
-        console.log('Guardado en localStorage:', key);
     } catch (error) {
         console.error('Error al guardar en localStorage:', error);
     }
@@ -28,7 +24,6 @@ function getLocalStorage(key) {
 function removeLocalStorage(key) {
     try {
         localStorage.removeItem(key);
-        console.log('Eliminado de localStorage:', key);
     } catch (error) {
         console.error('Error al eliminar de localStorage:', error);
     }

@@ -1,6 +1,3 @@
-// api-client.js - Cliente API completo
-console.log('API Client cargado');
-
 const API_BASE_URL = 'https://finanzapp-backend-a1rz.onrender.com';
 
 function getAuthHeader() {
