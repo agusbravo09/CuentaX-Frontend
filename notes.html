@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Notas - FinanzApp</title>
+    <link rel="stylesheet" href="css/components/header.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/modals.css">
+    <link rel="stylesheet" href="css/pages/notes.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/components/navbar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1>Cuenta<span>X</span></h1>
+        </div>
+        <div class="navbar-menu">
+            <a href="dashboard.html" class="navbar-item">
+                <i class="fas fa-home"></i><span>Dashboard</span>
+            </a>
+            <a href="accounts.html" class="navbar-item">
+                <i class="fas fa-wallet"></i><span>Cuentas</span>
+            </a>
+            <a href="transactions.html" class="navbar-item">
+                <i class="fas fa-exchange-alt"></i><span>Transacciones</span>
+            </a>
+            <a href="notes.html" class="navbar-item active">
+                <i class="fas fa-sticky-note"></i><span>Notas</span>
+            </a>
+            <div class="navbar-hamburger" id="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dropdown-menu" id="dropdown-menu">
+        <a href="profile.html" class="dropdown-item">
+            <i class="fas fa-user"></i><span>Perfil</span>
+        </a>
+        <button class="dropdown-item" id="switch-org-btn">
+            <i class="fas fa-building"></i><span>Cambiar a modo organización</span>
+        </button>
+        <button class="dropdown-item" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span>
+        </button>
+    </div>
+
+    <main class="notes-container">
+        <header class="notes-header">
+            <h2>Mis Notas</h2>
+            <div class="notes-actions">
+                <button class="btn btn-primary" id="add-note-btn">
+                    <i class="fas fa-plus"></i>Nueva Nota
+                </button>
+                <button class="btn btn-secondary" id="filter-toggle">
+                    <i class="fas fa-filter"></i>Filtrar
+                </button>
+            </div>
+        </header>
+
+        <section class="filters-section hidden" id="filters-section">
+            <div class="filter-options">
+                <div class="form-group">
+                    <label for="filter-search">Buscar</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="filter-search" placeholder="Buscar en notas...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="filter-sort">Ordenar por</label>
+                    <select id="filter-sort">
+                        <option value="newest">Más recientes primero</option>
+                        <option value="oldest">Más antiguas primero</option>
+                        <option value="title">Por título</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="notes-grid" id="notes-grid">
+            <div class="no-data">
+                <i class="fas fa-sticky-note"></i>
+                <p>No tienes notas registradas</p>
+                <button class="btn btn-primary" id="first-note-btn">Crear primera nota</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal para crear/editar notas -->
+    <div class="modal" id="note-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Nueva Nota</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="note-form" autocomplete="off">
+                    <input type="hidden" id="note-id">
+                    <div class="form-group">
+                        <label for="note-title">Título</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-heading"></i>
+                            <input type="text" id="note-title" placeholder="Título de la nota" required
+                                autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="note-content">Contenido</label>
+                        <div class="input-with-icon">
+                            <textarea id="note-content" rows="4" placeholder="Escribe el contenido de tu nota..."
+                                required autocomplete="off"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full" id="save-note-btn">Guardar Nota</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para comentarios -->
+    <div class="modal" id="comments-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Comentarios</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="comments-list" id="comments-list">
+                    <!-- Comentarios se cargarán aquí -->
+                </div>
+                <div class="add-comment">
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fas fa-comment"></i>
+                            <input type="text" id="new-comment" placeholder="Escribe un comentario..."
+                                autocomplete="off">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="add-comment-btn">Agregar comentario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para confirmar eliminación -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content small-modal">
+            <div class="modal-header">
+                <h2>Confirmar Eliminación</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="confirmation-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <p>¿Estás seguro de que deseas eliminar la nota <strong id="delete-note-title"></strong>?</p>
+                <div class="delete-warning">
+                    <p><i class="fas fa-exclamation-circle"></i> Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="confirmation-buttons">
+                    <button class="btn btn-secondary" id="cancel-delete">Cancelar</button>
+                    <button class="btn btn-error" id="confirm-delete">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/components/burguer.js"></script>
+    <script src="./js/services/utils.js"></script>
+    <script src="./js/services/api/api-client.js"></script>
+    <script src="./js/pages/notes.js"></script>
+</body>
+
+</html>

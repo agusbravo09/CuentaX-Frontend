@@ -1,17 +1,32 @@
-const API_BASE_URL = 'https://finanzapp-backend-a1rz.onrender.com';
+const API_BASE_URL = 'http://localhost:8080';
 
 function getAuthHeader() {
-    const authToken = getLocalStorage('authToken');
+    let authToken = getLocalStorage('authToken');
+    console.log('🔐 Token from storage:', authToken);
+
     if (!authToken) {
         console.error('No hay token de autenticación');
         return null;
     }
+
+    // Si el token es un objeto (no debería serlo), convertirlo a string
+    if (typeof authToken === 'object') {
+        authToken = JSON.stringify(authToken);
+    }
+
+    // Limpiar comillas si las tiene
+    authToken = authToken.replace(/^['"]|['"]$/g, '').trim();
+
+    console.log('🔐 Token cleaned:', authToken);
+
     return 'Basic ' + authToken;
 }
+
 
 async function fetchAPI(endpoint, options = {}) {
     const url = API_BASE_URL + endpoint;
     const authHeader = getAuthHeader();
+    console.log("Auth header enviado:", getAuthHeader());
 
     if (!authHeader) {
         redirectToLogin();
@@ -35,6 +50,10 @@ async function fetchAPI(endpoint, options = {}) {
         const response = await fetch(url, config);
 
         if (response.status === 401) {
+            setTimeout(() => {
+                console.log("ERROR HERE:", response);
+            }, 2000);
+            setTimeout();
             ['authToken', 'userEmail', 'currentUser'].forEach(key => removeLocalStorage(key));
             redirectToLogin();
             return null;
@@ -128,4 +147,43 @@ const internalTransferService = {
     getTransfersByAccount: async (accountId) => {
         return await fetchAPI(`/api/v1/internal-transfers/account/${accountId}`);
     }
+};
+
+const notesService = {
+    getAllNotes: () => fetchAPI('/api/v1/notes'),
+    getNoteById: (id) => fetchAPI('/api/v1/notes/' + id),
+    getNotesByUser: (userId) => fetchAPI('/api/v1/notes/user/' + userId),
+    searchByTitle: (title) => fetchAPI('/api/v1/notes/search/title?title=' + encodeURIComponent(title)),
+    searchByContent: (content) => fetchAPI('/api/v1/notes/search/content?content=' + encodeURIComponent(content)),
+    createNote: (noteData) => fetchAPI('/api/v1/notes', {
+        method: 'POST',
+        body: noteData
+    }),
+    updateNote: (id, noteData) => fetchAPI('/api/v1/notes/' + id, {
+        method: 'PUT',
+        body: noteData
+    }),
+    deleteNote: (id) => fetchAPI('/api/v1/notes/' + id, {
+        method: 'DELETE'
+    }),
+    addComment: (id, comment) => fetchAPI(`/api/v1/notes/${id}/comment?comment=${encodeURIComponent(comment)}`, {
+        method: 'POST'
+    })
+};
+
+const organizationService = {
+    getAllOrganizations: () => fetchAPI('/api/v1/organizations'),
+    getOrganizationById: (id) => fetchAPI('/api/v1/organizations/' + id),
+    getOrganizationsByUserId: (userId) => fetchAPI('/api/v1/organizations/user/' + userId),
+    createOrganization: (orgData) => fetchAPI('/api/v1/organizations', {
+        method: 'POST',
+        body: orgData
+    }),
+    updateOrganization: (id, orgData) => fetchAPI('/api/v1/organizations/' + id, {
+        method: 'PUT',
+        body: orgData
+    }),
+    deleteOrganization: (id) => fetchAPI('/api/v1/organizations/' + id, {
+        method: 'DELETE'
+    })
 };

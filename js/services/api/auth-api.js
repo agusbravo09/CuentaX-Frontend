@@ -1,7 +1,7 @@
 // auth-api.js - Servicio de autenticación
 console.log('Auth API cargado');
 
-const API_BASE_URL = 'https://finanzapp-backend-a1rz.onrender.com';
+const API_BASE_URL = 'http://localhost:8080';
 
 async function login(email, password) {
     
@@ -42,7 +42,8 @@ async function login(email, password) {
         } else if (response.status === 401) {
             return { 
                 success: false, 
-                error: 'Credenciales inválidas. Verifica tu email y contraseña.' 
+                error: 'Credenciales inválidas. Verifica tu email y contraseña.'
+               
             };
         } else {
             return { 

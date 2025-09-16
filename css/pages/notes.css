@@ -1,0 +1,569 @@
+/* Toast notifications */
+.toast-notes {
+    position: fixed;
+    top: 32px;
+    right: 32px;
+    z-index: 9999;
+    min-width: 220px;
+    max-width: 350px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+    transition: opacity 0.35s, transform 0.35s;
+    pointer-events: none;
+    display: none;
+}
+.toast-notes.toast-show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+.toast-notes.toast-success {
+    background: #2563EB;
+    color: #fff;
+}
+.toast-notes.toast-error {
+    background: #EF4444;
+    color: #fff;
+}
+:root {
+    --note-color: #297c79;
+    --task-color: #2563EB;
+    --completed-color: #10B981;
+    --rejected-color: #EF4444;
+    --edit-color: #F59E0B;
+    --delete-color: #EF4444;
+    --comment-color: #6B7280;
+}
+
+.notes-container {
+    padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding-bottom: 80px;
+    padding-top: 0;
+    margin-top: 0;
+    box-sizing: border-box;
+}
+
+.notes-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.notes-header h2 {
+    font-size: 1.75rem;
+    color: var(--gray-800);
+    margin: 0;
+    font-weight: 700;
+}
+
+.notes-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+#add-note-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--note-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#add-note-btn:hover {
+    background-color: #1e5f5c;
+}
+
+#filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--gray-200);
+    color: var(--gray-700);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#filter-toggle:hover {
+    background-color: var(--gray-300);
+}
+
+.filters-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filter-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.notes-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.note-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    border-left: 6px solid;
+}
+
+.note-card.note {
+    border-left-color: var(--note-color);
+}
+
+.note-card.task {
+    border-left-color: var(--task-color);
+}
+
+.note-card.task.completed {
+    border-left-color: var(--completed-color);
+}
+
+.note-card.task.rejected {
+    border-left-color: var(--rejected-color);
+}
+
+.note-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.note-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.note-icon.note {
+    background-color: var(--note-color);
+}
+
+.note-icon.task {
+    background-color: var(--task-color);
+}
+
+.note-icon.task.completed {
+    background-color: var(--completed-color);
+}
+
+.note-icon.task.rejected {
+    background-color: var(--rejected-color);
+}
+
+.note-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.note-action-btn {
+    background: none;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.note-action-btn.edit {
+    color: var(--edit-color);
+    border: 1px solid var(--edit-color);
+}
+
+.note-action-btn.edit:hover {
+    background-color: var(--edit-color);
+    color: white;
+}
+
+.note-action-btn.delete {
+    color: var(--delete-color);
+    border: 1px solid var(--delete-color);
+}
+
+.note-action-btn.delete:hover {
+    background-color: var(--delete-color);
+    color: white;
+}
+
+.note-action-btn.comment {
+    color: var(--comment-color);
+    border: 1px solid var(--comment-color);
+}
+
+.note-action-btn.comment:hover {
+    background-color: var(--comment-color);
+    color: white;
+}
+
+.note-info {
+    margin-bottom: 1.5rem;
+}
+
+.note-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0 0 0.5rem;
+}
+
+.note-content {
+    font-size: 0.95rem;
+    color: var(--gray-600);
+    margin: 0 0 1rem;
+    line-height: 1.5;
+}
+
+.note-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+.note-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.note-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.note-date {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+.note-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.note-status.pending {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #2563EB;
+}
+
+.note-status.completed {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+}
+
+.note-status.rejected {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+}
+
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.task-action-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.task-action-btn.complete {
+    background-color: var(--completed-color);
+    color: white;
+}
+
+.task-action-btn.complete:hover {
+    background-color: #0d966c;
+}
+
+.task-action-btn.reject {
+    background-color: var(--rejected-color);
+    color: white;
+}
+
+.task-action-btn.reject:hover {
+    background-color: #dc2626;
+}
+
+/* Estados vacíos */
+.no-data {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--gray-500);
+    grid-column: 1 / -1;
+}
+
+.no-data i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--gray-300);
+}
+
+.no-data p {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+/* Comentarios */
+.comments-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1.5rem;
+}
+
+/* Estilos para campos de texto y filtros en modales y filtros */
+.modal-content input[type="text"],
+.modal-content input[type="hidden"],
+.modal-content textarea,
+.modal-content select,
+.filter-options input[type="text"],
+.filter-options select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--gray-200, #e5e7eb);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--gray-700, #374151);
+    background: var(--gray-50, #f9fafb);
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.modal-content input[type="text"]:focus,
+.modal-content textarea:focus,
+.modal-content select:focus,
+.filter-options input[type="text"]:focus,
+.filter-options select:focus {
+    outline: none;
+    border-color: var(--note-color, #297c79);
+}
+
+.modal-content label,
+.filter-options label {
+    font-weight: 600;
+    color: var(--gray-700, #374151);
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-400, #9ca3af);
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.input-with-icon input[type="text"],
+.input-with-icon textarea,
+.input-with-icon select {
+    padding-left: 2.2rem !important;
+}
+
+/* Quitar padding en textarea de contenido si no tiene icono */
+#note-content {
+    padding-left: 1rem !important;
+}
+}
+
+.modal-content textarea {
+    resize: vertical;
+    min-height: 80px;
+    max-height: 200px;
+}
+
+.filter-options {
+    gap: 1.5rem;
+}
+
+.filter-options .form-group {
+    margin-bottom: 0.5rem;
+}
+
+.comment-item {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    background-color: var(--gray-50);
+    border-radius: 8px;
+    border-left: 3px solid var(--comment-color);
+}
+
+.comment-author {
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 0.25rem;
+}
+
+.comment-text {
+    color: var(--gray-600);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.comment-date {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    text-align: right;
+}
+
+.add-comment {
+    margin-top: 1rem;
+}
+
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 25px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+/* Media queries para tablets y escritorio */
+@media (min-width: 768px) {
+    .notes-container {
+        padding: 2rem;
+        padding-bottom: 2rem;
+        padding-top: 6rem;
+        max-width: none;
+        width: 75%;
+        margin-top: 0;
+    }
+    
+    .notes-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+    
+    .filter-options {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .notes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .notes-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Ajustes para móviles pequeños */
+@media (max-width: 480px) {
+    .notes-container {
+        padding: 0.75rem;
+        padding-bottom: 80px;
+    }
+    
+    .note-card {
+        padding: 1.25rem;
+    }
+    
+    .note-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .task-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .task-action-btn {
+        flex: 1;
+        text-align: center;
+    }
+}

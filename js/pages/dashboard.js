@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
         redirectToLogin();
         return;
     }
-    
     loadDashboardData();
 });
 

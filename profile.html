@@ -15,77 +15,118 @@
 </head>
 
 <body>
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="navbar-brand">
-            <h1>Finanz<span>App</span></h1>
+            <h1>Cuenta<span>X</span></h1>
         </div>
-        <div class="navbar-menu"><a href="dashboard.html" class="navbar-item"><i
-                    class="fas fa-home"></i><span>Dashboard</span></a><a href="accounts.html" class="navbar-item"><i
-                    class="fas fa-wallet"></i><span>Cuentas</span></a><a href="transactions.html" class="navbar-item"><i
-                    class="fas fa-exchange-alt"></i><span>Transacciones</span></a>
+        <div class="navbar-menu">
+            <a href="dashboard.html" class="navbar-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+            <a href="accounts.html" class="navbar-item"><i class="fas fa-wallet"></i><span>Cuentas</span></a>
+            <a href="transactions.html" class="navbar-item"><i class="fas fa-exchange-alt"></i><span>Transacciones</span></a>
+            <!-- Botón de notas solo visible en modo organización -->
+            <a href="notes.html" class="navbar-item org-only hidden"><i class="fas fa-sticky-note"></i><span>Notas</span></a>
             <div class="navbar-hamburger" id="hamburger-menu"><i class="fas fa-bars"></i></div>
         </div>
     </nav>
-    <div class="dropdown-menu" id="dropdown-menu"><a href="profile.html" class="dropdown-item active"><i
-                class="fas fa-user"></i><span>Perfil</span></a><button class="dropdown-item" id="logout-btn"><i
-                class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></button></div>
+
+    <!-- Dropdown -->
+    <div class="dropdown-menu" id="dropdown-menu">
+        <a href="profile.html" class="dropdown-item active"><i class="fas fa-user"></i><span>Perfil</span></a>
+        <button class="dropdown-item" id="switch-org-btn"><i class="fas fa-building"></i><span>Cambiar a modo organización</span></button>
+        <button class="dropdown-item" id="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></button>
+    </div>
+
+    <!-- Contenido -->
     <main class="profile-container">
         <header class="profile-header">
             <h2>Mi Perfil</h2>
             <p>Gestiona tu información personal</p>
         </header>
+
+        <!-- Perfil de usuario -->
         <section class="profile-card">
             <div class="profile-avatar">
                 <div class="avatar-placeholder"><i class="fas fa-user"></i></div>
             </div>
             <form id="profile-form" class="profile-form">
                 <div class="form-grid">
-                    <div class="form-group"><label for="profile-name"><i class="fas fa-user"></i> Nombre completo</label>
-                        <div class="input-with-icon"><i class="fas fa-user"></i><input type="text" id="profile-name"
-                                placeholder="Tu nombre completo" required autocomplete="off"></div>
+                    <div class="form-group">
+                        <label for="profile-name"><i class="fas fa-user"></i> Nombre completo</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="profile-name" placeholder="Tu nombre completo" required autocomplete="off">
+                        </div>
                     </div>
-                    <div class="form-group"><label for="profile-email"><i class="fas fa-envelope"></i> Correo
-                            electrónico</label>
-                        <div class="input-with-icon"><i class="fas fa-envelope"></i><input type="email"
-                                id="profile-email" placeholder="tu@email.com" required autocomplete="off"></div>
+                    <div class="form-group">
+                        <label for="profile-email"><i class="fas fa-envelope"></i> Correo electrónico</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="profile-email" placeholder="tu@email.com" required autocomplete="off">
+                        </div>
                     </div>
                 </div>
+
+                <!-- Cambiar contraseña -->
                 <div class="password-section">
-                    <h4>Cambiar Contraseña</h4>
+                    <h4><i class="fas fa-key"></i> Cambiar Contraseña</h4>
                     <div class="form-grid">
-                        <div class="form-group"><label for="new-password"><i class="fas fa-key"></i> Nueva
-                                contraseña</label>
-                            <div class="input-with-icon"><i class="fas fa-key"></i><input type="password"
-                                    id="new-password" placeholder="Ingresa nueva contraseña"
-                                    autocomplete="new-password"></div>
+                        <div class="form-group">
+                            <label for="new-password"><i class="fas fa-key"></i> Nueva contraseña</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-key"></i>
+                                <input type="password" id="new-password" placeholder="Ingresa nueva contraseña" autocomplete="new-password">
+                            </div>
                         </div>
-                        <div class="form-group"><label for="confirm-password"><i
-                                    class="fas fa-check-circle"></i> Confirmar contraseña</label>
-                            <div class="input-with-icon"><i class="fas fa-check-circle"></i><input type="password"
-                                    id="confirm-password" placeholder="Confirma nueva contraseña"
-                                    autocomplete="new-password"></div>
+                        <div class="form-group">
+                            <label for="confirm-password"><i class="fas fa-check-circle"></i> Confirmar contraseña</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-check-circle"></i>
+                                <input type="password" id="confirm-password" placeholder="Confirma nueva contraseña" autocomplete="new-password">
+                            </div>
                         </div>
                     </div>
-                    <div class="form-actions"><button type="button" class="btn btn-secondary"
-                            id="cancel-btn">Cancelar</button><button type="submit" class="btn btn-primary"
-                            id="save-btn"><i class="fas fa-save"></i> Guardar Cambios</button></div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-btn">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="save-btn"><i class="fas fa-save"></i> Guardar Cambios</button>
+                    </div>
+                </div>
             </form>
         </section>
+
+        <!-- Estadísticas -->
         <section class="account-info">
             <h3>Información de la Cuenta</h3>
             <div class="info-grid">
                 <div class="info-item"><i class="fas fa-calendar-plus"></i>
-                    <div class="info-content"><span class="info-label">Fecha de registro</span><span class="info-value"
-                            id="register-date">--/--/----</span></div>
+                    <div class="info-content"><span class="info-label">Fecha de registro</span><span class="info-value" id="register-date">--/--/----</span></div>
                 </div>
                 <div class="info-item"><i class="fas fa-database"></i>
-                    <div class="info-content"><span class="info-label">Cuentas registradas</span><span
-                            class="info-value" id="total-accounts">0</span></div>
+                    <div class="info-content"><span class="info-label">Cuentas registradas</span><span class="info-value" id="total-accounts">0</span></div>
                 </div>
                 <div class="info-item"><i class="fas fa-exchange-alt"></i>
-                    <div class="info-content"><span class="info-label">Transacciones realizadas</span><span
-                            class="info-value" id="total-transactions">0</span></div>
+                    <div class="info-content"><span class="info-label">Transacciones realizadas</span><span class="info-value" id="total-transactions">0</span></div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Nueva sección: Datos de la organización -->
+        <section class="organization-info org-only hidden">
+            <h3>Datos de la Organización</h3>
+            <div class="info-grid">
+                <div class="info-item"><i class="fas fa-building"></i>
+                    <div class="info-content"><span class="info-label">Nombre</span><span class="info-value" id="org-name">---</span></div>
+                </div>
+                <div class="info-item"><i class="fas fa-envelope"></i>
+                    <div class="info-content"><span class="info-label">Correo</span><span class="info-value" id="org-email">---</span></div>
+                </div>
+            </div>
+
+            <h4>Miembros</h4>
+            <ul id="org-members" class="members-list"></ul>
+            <div class="form-actions">
+                <input type="email" id="invite-email" placeholder="Correo del usuario">
+                <button type="button" class="btn btn-primary" id="invite-btn"><i class="fas fa-user-plus"></i> Invitar</button>
             </div>
         </section>
     </main>
