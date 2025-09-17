@@ -1,5 +1,4 @@
 // auth-api.js - Servicio de autenticación
-console.log('Auth API cargado');
 
 const API_BASE_URL = 'http://localhost:8080';
 

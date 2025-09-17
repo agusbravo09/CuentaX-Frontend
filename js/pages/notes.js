@@ -8,8 +8,6 @@ let commentNoteId = null;
 
 // Inicialización cuando el DOM esté cargado
 document.addEventListener('DOMContentLoaded', function () {
-
-    console.log(!!getLocalStorage('authToken'));
     // Verificar si el usuario está autenticado
     if (!isUserAuthenticated()) {
         redirectToLogin();

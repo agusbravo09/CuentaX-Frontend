@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Cuentas - FinanzApp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuentas - CuentaX</title>
     <link rel="stylesheet" href="css/components/header.css">
     <link rel="stylesheet" href="css/components/forms.css">
     <link rel="stylesheet" href="css/components/modals.css">
@@ -30,15 +30,29 @@
         </div>
     </nav>
     <div class="dropdown-menu" id="dropdown-menu"><a href="profile.html" class="dropdown-item"><i
-                class="fas fa-user"></i><span>Perfil</span></a>
-        <button class="dropdown-item" id="switch-org-btn"><i class="fas fa-building"></i><span>Cambiar a modo
-                organización</span></button><button class="dropdown-item" id="logout-btn"><i
+                class="fas fa-user"></i><span>Perfil</span></a><button class="dropdown-item" id="logout-btn"><i
                 class="fas fa-sign-out-alt"></i><span>Cerrar sesión</span></button>
     </div>
-    <main class="accounts-container">
+    <main class="accounts-container animate-fade">
         <header class="accounts-header">
-            <h2>Mis Cuentas</h2><button class="btn btn-primary" id="add-account-btn"><i class="fas fa-plus"></i>Agregar
-                Cuenta</button>
+            <h2>Mis Cuentas</h2>
+        </header>
+        <section class="accounts-filters">
+            <button class="btn btn-primary" id="add-account-btn"><i class="fas fa-plus"></i>Agregar Cuenta</button>
+            <div class="filters-group">
+                <select id="filter-type">
+                    <option value="">Todos los tipos</option>
+                    <option value="bank">Cuenta Bancaria</option>
+                    <option value="virtual_wallet">Billetera Virtual</option>
+                    <option value="cash">Efectivo</option>
+                </select>
+                <select id="filter-amount">
+                    <option value="">Monto</option>
+                    <option value="desc">Monto: Desc.</option>
+                    <option value="asc">Monto: Asc.</option>
+                </select>
+            </div>
+        </section>
         </header>
         <section class="accounts-grid" id="accounts-grid">
             <div class="no-data"><i class="fas fa-wallet"></i>

@@ -1,3 +1,12 @@
+/* Animación para fade-out de modales */
+.modal.hide {
+    opacity: 0 !important;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
 /* Modal Styles */
 .modal {
     display: none;

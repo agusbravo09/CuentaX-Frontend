@@ -10,8 +10,30 @@ document.addEventListener('DOMContentLoaded', () => {
     
     setupModalEvents();
     loadAccountsData();
-});
+    setupFilterEvents();
+    });
 
+    function setupFilterEvents() {
+        const typeSelect = document.getElementById('filter-type');
+        const amountSelect = document.getElementById('filter-amount');
+        if (typeSelect) typeSelect.addEventListener('change', renderAccountsGrid);
+        if (amountSelect) amountSelect.addEventListener('change', renderAccountsGrid);
+    }
+
+    function renderAccountsGrid() {
+        const type = document.getElementById('filter-type').value;
+        const amountOrder = document.getElementById('filter-amount').value;
+        let filtered = [...accountsData];
+        if (type) {
+            filtered = filtered.filter(acc => acc.type === type || acc.type?.toLowerCase() === type);
+        }
+        if (amountOrder === 'desc') {
+            filtered.sort((a, b) => b.currentBalance - a.currentBalance);
+        } else if (amountOrder === 'asc') {
+            filtered.sort((a, b) => a.currentBalance - b.currentBalance);
+        }
+        updateAccountsList(filtered);
+    }
 function setupModalEvents() {
     const addAccountBtn = document.getElementById('add-account-btn');
     const firstAccountBtn = document.getElementById('first-account-btn');
