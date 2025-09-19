@@ -155,7 +155,11 @@ function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.classList.remove('show');
-        setTimeout(() => modal.style.display = 'none', 300);
+        modal.classList.add('hide');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.classList.remove('hide');
+        }, 300);
     }
 }
 

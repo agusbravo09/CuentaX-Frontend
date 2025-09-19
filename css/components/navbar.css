@@ -15,6 +15,10 @@
     --gray-700: #374151;
     --gray-800: #1F2937;
     --gray-900: #111827;
+    --navbar-transparent: rgba(255,255,255,0.0); /* Fondo transparente */
+    --navbar-solid: #ffffff; /* Fondo sólido para scroll */
+    --cuenta-blue: #2563EB;
+    --cuenta-green: #10B981;
 }
 
 /* Navbar inferior para móviles */
@@ -23,11 +27,11 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: white;
+    background: var(--navbar-solid);
     display: flex;
     justify-content: space-around;
     padding: 0.75rem 0;
-    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: none;
     z-index: 1000;
 }
 
@@ -89,15 +93,25 @@
     }
     
     .navbar-brand h1 {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--secondary);
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: none;
+    color: inherit;
     }
     
-    .navbar-brand span {
-        color: var(--primary);
+    .navbar-brand span:first-child {
+    color: var(--cuenta-blue);
+    font-weight: 700;
+    font-size: 1.5rem;
     }
+/* Estilo para la 'x' en el logo */
+.navbar-brand .cuenta-x {
+    color: var(--cuenta-green);
+    font-weight: 700;
+    font-size: 1.5rem;
+}
     
     .navbar-menu {
         width: auto;

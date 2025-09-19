@@ -1,13 +1,25 @@
-const API_BASE_URL = 'https://finanzapp-backend-a1rz.onrender.com';
+const API_BASE_URL = 'http://localhost:8080';
 
 function getAuthHeader() {
-    const authToken = getLocalStorage('authToken');
+    let authToken = getLocalStorage('authToken');
+
     if (!authToken) {
         console.error('No hay token de autenticación');
         return null;
     }
+
+    // Si el token es un objeto (no debería serlo), convertirlo a string
+    if (typeof authToken === 'object') {
+        authToken = JSON.stringify(authToken);
+    }
+
+    // Limpiar comillas si las tiene
+    authToken = authToken.replace(/^['"]|['"]$/g, '').trim();
+
+
     return 'Basic ' + authToken;
 }
+
 
 async function fetchAPI(endpoint, options = {}) {
     const url = API_BASE_URL + endpoint;
@@ -128,4 +140,26 @@ const internalTransferService = {
     getTransfersByAccount: async (accountId) => {
         return await fetchAPI(`/api/v1/internal-transfers/account/${accountId}`);
     }
+};
+
+const notesService = {
+    getAllNotes: () => fetchAPI('/api/v1/notes'),
+    getNoteById: (id) => fetchAPI('/api/v1/notes/' + id),
+    getNotesByUser: (userId) => fetchAPI('/api/v1/notes/user/' + userId),
+    searchByTitle: (title) => fetchAPI('/api/v1/notes/search/title?title=' + encodeURIComponent(title)),
+    searchByContent: (content) => fetchAPI('/api/v1/notes/search/content?content=' + encodeURIComponent(content)),
+    createNote: (noteData) => fetchAPI('/api/v1/notes', {
+        method: 'POST',
+        body: noteData
+    }),
+    updateNote: (id, noteData) => fetchAPI('/api/v1/notes/' + id, {
+        method: 'PUT',
+        body: noteData
+    }),
+    deleteNote: (id) => fetchAPI('/api/v1/notes/' + id, {
+        method: 'DELETE'
+    }),
+    addComment: (id, comment) => fetchAPI(`/api/v1/notes/${id}/comment?comment=${encodeURIComponent(comment)}`, {
+        method: 'POST'
+    })
 };

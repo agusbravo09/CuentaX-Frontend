@@ -652,7 +652,8 @@ async function saveTransaction() {
             date: date,
             accountId: parseInt(accountId),
             categoryId: parseInt(categoryId),
-            paymentMethodId: parseInt(paymentMethodId)
+            paymentMethodId: parseInt(paymentMethodId),
+            userId: getLocalStorage('currentUser').id
         };
         
         
