@@ -163,20 +163,3 @@ const notesService = {
         method: 'POST'
     })
 };
-
-const organizationService = {
-    getAllOrganizations: () => fetchAPI('/api/v1/organizations'),
-    getOrganizationById: (id) => fetchAPI('/api/v1/organizations/' + id),
-    getOrganizationsByUserId: (userId) => fetchAPI('/api/v1/organizations/user/' + userId),
-    createOrganization: (orgData) => fetchAPI('/api/v1/organizations', {
-        method: 'POST',
-        body: orgData
-    }),
-    updateOrganization: (id, orgData) => fetchAPI('/api/v1/organizations/' + id, {
-        method: 'PUT',
-        body: orgData
-    }),
-    deleteOrganization: (id) => fetchAPI('/api/v1/organizations/' + id, {
-        method: 'DELETE'
-    })
-};

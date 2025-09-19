@@ -29,7 +29,7 @@ function initializeNotes() {
     }
 
     // Cargar notas
-    loadNotes();
+    loadNotes(currentUser.id);
 }
 
 // Configurar event listeners
@@ -70,10 +70,9 @@ function setupEventListeners() {
 }
 
 // Cargar notas desde el API
-async function loadNotes() {
+async function loadNotes(UserId) {
     try {
-        showLoading();
-        const response = await notesService.getAllNotes();
+        const response = await notesService.getNotesByUser(UserId);
 
         if (response) {
             notes = response;
@@ -84,8 +83,6 @@ async function loadNotes() {
     } catch (error) {
         console.error('Error loading notes:', error);
         showError('Error al cargar las notas');
-    } finally {
-        hideLoading();
     }
 }
 
@@ -170,7 +167,6 @@ function showAddNoteModal() {
 // Editar nota existente
 async function editNote(noteId) {
     try {
-        showLoading();
         const response = await notesService.getNoteById(noteId);
 
         if (response) {
@@ -187,8 +183,6 @@ async function editNote(noteId) {
     } catch (error) {
         console.error('Error loading note for edit:', error);
         showError('Error al cargar la nota para editar');
-    } finally {
-        hideLoading();
     }
 }
 
@@ -206,7 +200,6 @@ async function handleNoteSubmit(e) {
     }
 
     try {
-        showLoading();
         const noteData = {
             title: title,
             content: content,
@@ -224,14 +217,12 @@ async function handleNoteSubmit(e) {
 
         if (response) {
             closeModal('note-modal');
-            loadNotes(); // Recargar la lista de notas
+            loadNotes(currentUser.id); // Recargar la lista de notas
             showSuccess(noteId ? 'Nota actualizada correctamente' : 'Nota creada correctamente');
         }
     } catch (error) {
         console.error('Error saving note:', error);
         showError('Error al guardar la nota');
-    } finally {
-        hideLoading();
     }
 }
 
@@ -251,19 +242,16 @@ async function confirmDeleteNote(noteId) {
 // Eliminar nota
 async function deleteNote(noteId) {
     try {
-        showLoading();
         const response = await notesService.deleteNote(noteId);
 
         if (response !== undefined) {
             closeModal('delete-modal');
-            loadNotes(); // Recargar la lista de notas
+            loadNotes(currentUser.id); // Recargar la lista de notas
             showSuccess('Nota eliminada correctamente');
         }
     } catch (error) {
         console.error('Error deleting note:', error);
         showError('Error al eliminar la nota');
-    } finally {
-        hideLoading();
     }
 }
 
@@ -272,7 +260,6 @@ async function showCommentsModal(noteId) {
     commentNoteId = noteId;
 
     try {
-        showLoading();
         const response = await notesService.getNoteById(noteId);
 
         if (response) {
@@ -294,8 +281,6 @@ async function showCommentsModal(noteId) {
     } catch (error) {
         console.error('Error loading comments:', error);
         showError('Error al cargar los comentarios');
-    } finally {
-        hideLoading();
     }
 }
 
@@ -309,7 +294,6 @@ async function addComment() {
     }
 
     try {
-        showLoading();
         const response = await notesService.addComment(commentNoteId, commentText);
 
         if (response) {
@@ -326,13 +310,11 @@ async function addComment() {
             showSuccess('Comentario agregado correctamente');
 
             // Recargar notas para actualizar el contador
-            loadNotes();
+            loadNotes(currentUser.id);
         }
     } catch (error) {
         console.error('Error adding comment:', error);
         showError('Error al agregar el comentario');
-    } finally {
-        hideLoading();
     }
 }
 
@@ -460,14 +442,6 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
-}
-
-function showLoading() {
-    // Implementar lógica de loading si es necesario
-}
-
-function hideLoading() {
-    // Implementar lógica de loading si es necesario
 }
 
 // Notificaciones tipo toast
