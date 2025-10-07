@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.API_URL;
+const API_BASE_URL = 'https://finanzapp-backend-a1rz.onrender.com';
 
 function getAuthHeader() {
     let authToken = getLocalStorage('authToken');
