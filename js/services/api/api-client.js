@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.API_URL;
 
 function getAuthHeader() {
     let authToken = getLocalStorage('authToken');

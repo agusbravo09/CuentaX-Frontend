@@ -1,6 +1,6 @@
 // auth-api.js - Servicio de autenticación
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.API_URL;
 
 async function login(email, password) {
     
